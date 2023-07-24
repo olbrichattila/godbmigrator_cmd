@@ -2,7 +2,11 @@
 
 !!Under development...
 
-## Create migration SQL files into the the folder migrations (will be configurable)
+## Create migration SQL files
+
+If you would like to build the migration into your application, please see:
+https://github.com/olbrichattila/godbmigrator/
+
 
 ## What is the provider?
 

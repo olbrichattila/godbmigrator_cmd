@@ -10,6 +10,8 @@ import (
 	migrator "github.com/olbrichattila/godbmigrator"
 )
 
+const defaultMigrationFolder = "./migrations"
+
 func main() {
 	if err := godotenv.Load(); err != nil {
 		fmt.Println("Error loading .env file:", err)
@@ -39,7 +41,10 @@ func migrate() {
 		return
 	}
 
-	migrator.Migrate(conn, provider, count)
+	err = migrator.Migrate(conn, provider, defaultMigrationFolder, count)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func rollback() {
@@ -50,7 +55,10 @@ func rollback() {
 		return
 	}
 
-	migrator.Rollback(conn, provider, count)
+	err = migrator.Rollback(conn, provider, defaultMigrationFolder, count)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func add() {
@@ -60,7 +68,7 @@ func add() {
 		customText = "-" + os.Args[2]
 	}
 
-	migrator.AddNewMigrationFiles(customText)
+	migrator.AddNewMigrationFiles(defaultMigrationFolder, customText)
 }
 
 func displayUsage() {

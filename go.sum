@@ -6,5 +6,5 @@ github.com/lib/pq v1.10.9 h1:YXG7RB+JIjhP29X+OtkiDnYaXQwpS4JEWq7dtCCRUEw=
 github.com/lib/pq v1.10.9/go.mod h1:AlVN5x4E4T544tWzH6hKfbfQvm3HdbOxrmggDNAPY9o=
 github.com/mattn/go-sqlite3 v1.14.17 h1:mCRHCLDUBXgpKAqIKsaAaAsrAlbkeomtRFKXh2L6YIM=
 github.com/mattn/go-sqlite3 v1.14.17/go.mod h1:2eHXhiwb8IkHr+BDWZGa96P6+rkvnG63S2DGjv9HUNg=
-github.com/olbrichattila/godbmigrator v1.0.3 h1:wyC70Gz+G1LGFrhf5IVxOIJkmE16bbyF94ysTXLwg3Y=
-github.com/olbrichattila/godbmigrator v1.0.3/go.mod h1:wSJLy1XagndJd5Y3VeXmYdQLG6ZsWxGC78S7G+QNBuw=
+github.com/olbrichattila/godbmigrator v1.0.5 h1:nnHBcX894qhSifTxPFVtes/lw7tjYoq2Bf91Pb84WEI=
+github.com/olbrichattila/godbmigrator v1.0.5/go.mod h1:wSJLy1XagndJd5Y3VeXmYdQLG6ZsWxGC78S7G+QNBuw=
