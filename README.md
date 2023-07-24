@@ -38,7 +38,6 @@ For example:
 
 ## Command line usage:
 
-# Without building the app
 
 Migrate:
 ```go run cmd/cmd.go migrate```
@@ -97,7 +96,6 @@ DB_USERNAME=root
 DB_PASSWORD=password
 ```
 
-
 ### Postgres
 ```
 DB_CONNECTION=pgsql
@@ -125,100 +123,7 @@ MIGRATOR_MIGRATION_PROVIDER=db
 ```
 If not set, it defaults to db.
 
-## Adding to your code.
-
-Import the module:
-
-```migrator "github.com/olbrichattila/godbmigrator"```
-
-You need to have a DB connection, and a migration provider.
-
-The migration provider stores the migration status to:
-- json
-- database
-- (others to come)
-
-
-Currently the command line utility supports only SqLite, the build in solution shoud work, but not tested with oher databases
-
-Coming soon:
-- MySql
-- Postgresql
-
-## Example migrate: (where the db is your *sql.DB)
-
-```
-migrationProvider, err := migrator.NewMigrationProvider("json")
-if err != nil {
-    panic("Error: " + err.Error())
-}
-
-err = migrator.Migrate(db, migrationProvider, count)
-if err != nil {
-    panic("Error: " + err.Error())
-}
-```
-
-## Example rollback: (where the db is your *sql.DB)
-```
-migrationProvider, err := migrator.NewMigrationProvider("json", nil)
-if err != nil {
-    panic("Error: " + err.Error())
-}
-
-err = migrator.Rollback(db, migrationProvider, count)
-if err != nil {
-    panic("Error: " + err.Error())
-}
-```
-
-## Migrate With database provider
-```
-db, err := migrator.NewSqliteStore("./data/database.sqlite")
-if err != nil {
-    panic("Error: " + err.Error())
-}
-
-migrationProvider, err := migrator.NewMigrationProvider("db", db)
-if err != nil {
-    panic("Error: " + err.Error())
-}
-
-err = migrator.Migrate(db, migrationProvider, count)
-if err != nil {
-    panic("Error: " + err.Error())
-}
-```
-
-## Rollback With database provider
-```
-db, err := migrator.NewSqliteStore("./data/database.sqlite")
-if err != nil {
-    panic("Error: " + err.Error())
-}
-
-migrationProvider, err := migrator.NewMigrationProvider("db", db)
-if err != nil {
-    panic("Error: " + err.Error())
-}
-
-err = migrator.Rollback(db, migrationProvider, count)
-if err != nil {
-    panic("Error: " + err.Error())
-}
-```
-
-## Example, create new migration file:
-(same as ``````go run cmd/cmd.go add <your custom message>``````)
-```
-err := migrator.AddNewMigrationFiles(secondParameter)
-if err != nil {
-    panic("Error: " + err.Error())
-}
-```
-
 ## Available make targets:
-
 ```
 mage migrate
 make rollback
@@ -230,7 +135,3 @@ switch-sqlite:
 switch-mysql:
 switch-pgsql:
 ```
-## Coming soon
-
-.env where you can define the database connection. migration file paths and migration provider type therefore it can be used as a full featured command line migrator.
-

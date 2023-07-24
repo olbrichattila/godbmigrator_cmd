@@ -1,0 +1,44 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with "go test -c"
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Dependency directories (created by `go get`)
+/vendor/
+/Godeps/
+
+# Compiled Object files, Static and Dynamic libs (Shared Objects)
+*.o
+*.a
+*.so
+
+# Ignoring the binary and executable files produced by go
+# Add any other executable binaries that your project generates
+/bin/
+
+# Go specific ignore patterns
+# This is to ignore the binary files and
+# any test data you have set up
+*.test
+
+# Ignore the output directory
+# as all of the code should be stored in source control
+/output/
+
+# Ignore IDE and Editor specific files
+# (use the comment below if you use GoLand)
+#.idea/
+# (use the comment below if you use Visual Studio Code)
+.vscode/
+.env
+/migrations/
+/data/
+/build/
