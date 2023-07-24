@@ -1,3 +1,0 @@
-     deleted:    mysqlconnection.go
-        deleted:    postgresconnection.go
-        deleted:    sqliteconnection.go
