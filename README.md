@@ -1,7 +1,5 @@
 # Golang Database migrator
 
-!!Under development...
-
 ## Create migration SQL files
 
 If you would like to build the migration into your application, please see:
