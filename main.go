@@ -17,6 +17,13 @@ func main() {
 		fmt.Println("Error loading .env file:", err)
 		return
 	}
+
+	if err := routeCommandLineParameters(); err != nil {
+		displayUsage()
+	}
+}
+
+func routeCommandLineParameters() error {
 	if len(os.Args) > 1 {
 		switch os.Args[1] {
 		case "migrate":
@@ -26,11 +33,13 @@ func main() {
 		case "add":
 			add()
 		default:
-			displayUsage()
+			return fmt.Errorf("Cannot find command")
 		}
 	} else {
-		displayUsage()
+		return fmt.Errorf("Invalid parameter count")
 	}
+
+	return nil
 }
 
 func migrate() {
@@ -101,6 +110,7 @@ func migrationInit() (*sql.DB, migrator.MigrationProvider, int, error) {
 	if err != nil {
 		return nil, nil, 0, err
 	}
+
 	provider, err := provider(conn)
 	if err != nil {
 		return nil, nil, 0, err
@@ -116,6 +126,7 @@ func migrationInit() (*sql.DB, migrator.MigrationProvider, int, error) {
 
 func connection() (*sql.DB, error) {
 	dbConnection := os.Getenv("DB_CONNECTION")
+
 	switch dbConnection {
 	case "sqlite":
 		db, err := NewSqliteStore(os.Getenv("DB_DATABASE"))
