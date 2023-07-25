@@ -11,7 +11,9 @@ Currently it supports two type of migration provider, json and database.
 This is the way the migrator knows which migration was executed and when.
 
 If the json provider is used, then a json file will be saved next to the migration files:
-```./migrations/migrations.json```
+```
+./migrations/migrations.json
+```
 
 If the db provider is user, then a migrations table will be created in the same database where you are migrating to.
 
@@ -38,24 +40,43 @@ For example:
 
 ## Command line usage:
 Migrate:
-```go run cmd/cmd.go migrate```
+```
+go run cmd/cmd.go migrate
+```
 
 Rollback:
-```go run cmd/cmd.go rollback```
+```
+go run cmd/cmd.go rollback
+```
 
 Adding new migratio and rollack file:
-``````go run cmd/cmd.go add <your custom message>``````
+```
+go run cmd/cmd.go add <your custom message>
+```
 Note: the custom message is not mandatory, in that case the file will be a standard format, like date_time-migration.sql
 
 ### Migrate or rollback specified amount of migrations (like 2)
 Migrate:
-```go run cmd/cmd.go migrate 2```
+```
+go run cmd/cmd.go migrate 2
+```
 
 Rollback:
-```go run cmd/cmd.go rollback 2```
+```
+go run cmd/cmd.go rollback 2
+```
+Refresh
+(Refresh is when all applied migration is rolled back and migrated up from scratch)
+```
+go run cmd/cmd.go refresh
+```
+Here if the count parameter supplied will be ignored
+
 
 ### When building the application.
-```make install```
+```
+make install
+```
 The build folder will contain the migrator executable.
 
 Usage is the same but using the application:
@@ -66,6 +87,8 @@ migrator rollback
 
 migrator migrate 2
 migrator rollback 2
+
+migrator refresh
 ```
 
 The number of rollbacks and migrates are not mandatory.

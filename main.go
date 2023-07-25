@@ -30,6 +30,8 @@ func routeCommandLineParameters() error {
 			migrate()
 		case "rollback":
 			rollback()
+		case "refresh":
+			refresh()
 		case "add":
 			add()
 		default:
@@ -67,6 +69,21 @@ func rollback() {
 
 	migrationPath := migrationPath()
 	err = migrator.Rollback(conn, provider, migrationPath, count)
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
+func refresh() {
+	fmt.Println("Rolling back")
+	conn, provider, _, err := migrationInit()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	migrationPath := migrationPath()
+	err = migrator.Refresh(conn, provider, migrationPath)
 	if err != nil {
 		fmt.Println(err)
 	}
