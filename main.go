@@ -10,7 +10,7 @@ import (
 	migrator "github.com/olbrichattila/godbmigrator"
 )
 
-const defaultMigrationFolder = "./migrations"
+const defaultMigrationPath = "./migrations"
 
 func main() {
 	if err := godotenv.Load(); err != nil {
@@ -41,7 +41,8 @@ func migrate() {
 		return
 	}
 
-	err = migrator.Migrate(conn, provider, defaultMigrationFolder, count)
+	migrationPath := migrationPath()
+	err = migrator.Migrate(conn, provider, migrationPath, count)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -55,7 +56,8 @@ func rollback() {
 		return
 	}
 
-	err = migrator.Rollback(conn, provider, defaultMigrationFolder, count)
+	migrationPath := migrationPath()
+	err = migrator.Rollback(conn, provider, migrationPath, count)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -68,7 +70,8 @@ func add() {
 		customText = "-" + os.Args[2]
 	}
 
-	migrator.AddNewMigrationFiles(defaultMigrationFolder, customText)
+	migrationPath := migrationPath()
+	migrator.AddNewMigrationFiles(migrationPath, customText)
 }
 
 func displayUsage() {
@@ -160,4 +163,26 @@ func provider(db *sql.DB) (migrator.MigrationProvider, error) {
 	default:
 		return nil, fmt.Errorf("Migration provider for type %s does not exists", migrationProvider)
 	}
+}
+
+func migrationPath() string {
+	migrationPath := os.Getenv("MIGRATOR_MIGRATION_PATH")
+	if migrationPath == "" {
+		return defaultMigrationPath
+	}
+
+	return removeLastSlashOrBackslash(migrationPath)
+}
+
+func removeLastSlashOrBackslash(inputString string) string {
+	if len(inputString) <= 1 {
+		return inputString
+	}
+
+	lastChar := inputString[len(inputString)-1:]
+	if lastChar == "/" || lastChar == "\\" {
+		return inputString[:len(inputString)-1]
+	}
+
+	return inputString
 }

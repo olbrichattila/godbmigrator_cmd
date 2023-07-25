@@ -7,7 +7,6 @@ https://github.com/olbrichattila/godbmigrator/
 
 
 ## What is the provider?
-
 Currently it supports two type of migration provider, json and database.
 This is the way the migrator knows which migration was executed and when.
 
@@ -17,7 +16,6 @@ If the json provider is used, then a json file will be saved next to the migrati
 If the db provider is user, then a migrations table will be created in the same database where you are migrating to.
 
 ## Migration file structure
-
 Follow the structure:
 [id]-migrate-[custom-content].sql
 
@@ -39,8 +37,6 @@ For example:
 ```
 
 ## Command line usage:
-
-
 Migrate:
 ```go run cmd/cmd.go migrate```
 
@@ -52,7 +48,6 @@ Adding new migratio and rollack file:
 Note: the custom message is not mandatory, in that case the file will be a standard format, like date_time-migration.sql
 
 ### Migrate or rollback specified amount of migrations (like 2)
-
 Migrate:
 ```go run cmd/cmd.go migrate 2```
 
@@ -60,7 +55,6 @@ Rollback:
 ```go run cmd/cmd.go rollback 2```
 
 ### When building the application.
-
 ```make install```
 The build folder will contain the migrator executable.
 
@@ -78,7 +72,6 @@ The number of rollbacks and migrates are not mandatory.
 If it is set, for rollbacks it only apply for the last rollback batch
 
 ## .env settings
-
 Create a .env file into your root directory
 Examples:
 
@@ -115,6 +108,13 @@ Note: Postres currently supports only sslmod disable, others to come:
 - verify-full
 - prefer
 - allow
+
+## Setting migration path
+The path by default is ./migrations
+This can be overwritten by adding the followin variable to your .env file
+```
+MIGRATOR_MIGRATION_PATH=./migrations/custom_path
+```
 
 ## Setting the migration provider in .env
 It is possible to set the migration provider (see above, saves to database or json)
