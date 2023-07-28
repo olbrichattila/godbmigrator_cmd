@@ -152,6 +152,7 @@ If not set, it defaults to db.
 ```
 mage migrate
 make rollback
+make refresh
 make install
 ```
 ## Switch .env file with boilerplate setup for the followin database connections

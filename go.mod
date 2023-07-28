@@ -7,6 +7,5 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/lib/pq v1.10.9
 	github.com/mattn/go-sqlite3 v1.14.17
+	github.com/olbrichattila/godbmigrator v1.0.7
 )
-
-require github.com/olbrichattila/godbmigrator v1.0.6

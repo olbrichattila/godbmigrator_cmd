@@ -2,6 +2,8 @@ migrate:
 	go run . migrate
 rollback:
 	go run . rollback
+refresh:
+	go run . refresh
 install:
 	go build -o ./build/migrator .
 switch-sqlite:
