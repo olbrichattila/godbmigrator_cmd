@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
-	"strconv"
 
 	"github.com/joho/godotenv"
 	migrator "github.com/olbrichattila/godbmigrator"
@@ -12,28 +11,40 @@ import (
 
 const defaultMigrationPath = "./migrations"
 
+type providerInterface interface {
+}
+
+type migratorInterface interface {
+	Migrate(*sql.DB, migrator.MigrationProvider, string, int) error
+	Rollback(*sql.DB, migrator.MigrationProvider, string, int) error
+	Refresh(*sql.DB, migrator.MigrationProvider, string) error
+	AddNewMigrationFiles(string, string)
+}
+
 func main() {
 	if err := godotenv.Load(); err != nil {
 		fmt.Println("Error loading .env file:", err)
 		return
 	}
 
-	if err := routeCommandLineParameters(); err != nil {
+	migrationAdapter := NewMigrationAdapter()
+	migrationInit := newMigrationInit()
+	if err := routeCommandLineParameters(os.Args, migrationAdapter, migrationInit); err != nil {
 		displayUsage()
 	}
 }
 
-func routeCommandLineParameters() error {
-	if len(os.Args) > 1 {
-		switch os.Args[1] {
+func routeCommandLineParameters(args []string, migrationAdapter migratorInterface, migrationInit migrationInitInterface) error {
+	if len(args) > 1 {
+		switch args[1] {
 		case "migrate":
-			migrate()
+			migrate(args, migrationAdapter, migrationInit)
 		case "rollback":
-			rollback()
+			rollback(args, migrationAdapter, migrationInit)
 		case "refresh":
-			refresh()
+			refresh(args, migrationAdapter, migrationInit)
 		case "add":
-			add()
+			add(args, migrationAdapter)
 		default:
 			return fmt.Errorf("Cannot find command")
 		}
@@ -44,60 +55,60 @@ func routeCommandLineParameters() error {
 	return nil
 }
 
-func migrate() {
+func migrate(args []string, migrationAdapter migratorInterface, migrationInit migrationInitInterface) {
 	fmt.Println("Migrating")
-	conn, provider, count, err := migrationInit()
+	conn, provider, count, err := migrationInit.migrationInit(args)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
 	migrationPath := migrationPath()
-	err = migrator.Migrate(conn, provider, migrationPath, count)
+	err = migrationAdapter.Migrate(conn, provider, migrationPath, count)
 	if err != nil {
 		fmt.Println(err)
 	}
 }
 
-func rollback() {
+func rollback(args []string, migrationAdapter migratorInterface, migrationInit migrationInitInterface) {
 	fmt.Println("Rolling back")
-	conn, provider, count, err := migrationInit()
+	conn, provider, count, err := migrationInit.migrationInit(args)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
 	migrationPath := migrationPath()
-	err = migrator.Rollback(conn, provider, migrationPath, count)
+	err = migrationAdapter.Rollback(conn, provider, migrationPath, count)
 	if err != nil {
 		fmt.Println(err)
 	}
 }
 
-func refresh() {
+func refresh(args []string, migrationAdapter migratorInterface, migrationInit migrationInitInterface) {
 	fmt.Println("Rolling back")
-	conn, provider, _, err := migrationInit()
+	conn, provider, _, err := migrationInit.migrationInit(args)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
 	migrationPath := migrationPath()
-	err = migrator.Refresh(conn, provider, migrationPath)
+	err = migrationAdapter.Refresh(conn, provider, migrationPath)
 	if err != nil {
 		fmt.Println(err)
 	}
 }
 
-func add() {
+func add(args []string, migrationAdapter migratorInterface) {
 	fmt.Println("Adding new migration")
 	customText := ""
-	if len(os.Args) > 2 {
-		customText = "-" + os.Args[2]
+	if len(args) > 2 {
+		customText = "-" + args[2]
 	}
 
 	migrationPath := migrationPath()
-	migrator.AddNewMigrationFiles(migrationPath, customText)
+	migrationAdapter.AddNewMigrationFiles(migrationPath, customText)
 }
 
 func displayUsage() {
@@ -112,85 +123,6 @@ The number of rollbacks and migrates are not mandatory.
 If it is set, for rollbacks it only apply for the last rollback batch
 
 `)
-}
-
-func migrationCount() (int, error) {
-	if len(os.Args) > 2 {
-		return strconv.Atoi(os.Args[2])
-	}
-
-	return 0, nil
-}
-
-func migrationInit() (*sql.DB, migrator.MigrationProvider, int, error) {
-	conn, err := connection()
-	if err != nil {
-		return nil, nil, 0, err
-	}
-
-	provider, err := provider(conn)
-	if err != nil {
-		return nil, nil, 0, err
-	}
-
-	count, err := migrationCount()
-	if err != nil {
-		return nil, nil, 0, err
-	}
-
-	return conn, provider, count, err
-}
-
-func connection() (*sql.DB, error) {
-	dbConnection := os.Getenv("DB_CONNECTION")
-
-	switch dbConnection {
-	case "sqlite":
-		db, err := NewSqliteStore(os.Getenv("DB_DATABASE"))
-		return db, err
-	case "pgsql":
-		port, err := strconv.Atoi(os.Getenv("DB_PORT"))
-		if err != nil {
-			return nil, err
-		}
-		db, err := NewPostgresStore(
-			os.Getenv("DB_HOST"),
-			port,
-			os.Getenv("DB_USERNAME"),
-			os.Getenv("DB_PASSWORD"),
-			os.Getenv("DB_DATABASE"),
-			PgsSslMode.Disable,
-		)
-		return db, err
-	case "mysql":
-		port, err := strconv.Atoi(os.Getenv("DB_PORT"))
-		if err != nil {
-			return nil, err
-		}
-		db, err := NewMysqlStore(
-			os.Getenv("DB_HOST"),
-			port,
-			os.Getenv("DB_USERNAME"),
-			os.Getenv("DB_PASSWORD"),
-			os.Getenv("DB_DATABASE"),
-		)
-		return db, err
-	default:
-		return nil, fmt.Errorf("Invalid DB_CONNECTION %s", dbConnection)
-	}
-}
-
-func provider(db *sql.DB) (migrator.MigrationProvider, error) {
-	migrationProvider := os.Getenv("MIGRATOR_MIGRATION_PROVIDER")
-
-	switch migrationProvider {
-	case "db", "":
-		return migrator.NewMigrationProvider("db", db)
-	case "json":
-		return migrator.NewMigrationProvider("json", nil)
-	default:
-		return nil, fmt.Errorf("Migration provider for type %s does not exists", migrationProvider)
-	}
 }
 
 func migrationPath() string {

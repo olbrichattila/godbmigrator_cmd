@@ -4,6 +4,8 @@ rollback:
 	go run . rollback
 refresh:
 	go run . refresh
+run-test:
+	go test
 install:
 	go build -o ./build/migrator .
 switch-sqlite:

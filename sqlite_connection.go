@@ -8,7 +8,6 @@ import (
 
 func NewSqliteStore(fileName string) (*sql.DB, error) {
 	db, err := sql.Open("sqlite3", fileName)
-
 	if err != nil {
 		return nil, err
 	}
