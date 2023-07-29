@@ -122,15 +122,11 @@ DB_PORT=5432
 DB_DATABASE=postgres
 DB_USERNAME=postgres
 DB_PASSWORD=postgres
-```
 
-Note: Postres currently supports only sslmod disable, others to come:
-- disable
-- require
-- verify-ca
-- verify-full
-- prefer
-- allow
+# non mandatory, it defaults to disable
+# possible values are: disable, require, verify-ca, verify-full, prefer, allow (depending on your setup)
+DB_SSLMODE=disable
+```
 
 ## Setting migration path
 The path by default is ./migrations

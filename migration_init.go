@@ -47,6 +47,10 @@ func (m *migrationInit) connection() (*sql.DB, error) {
 		db, err := NewSqliteStore(os.Getenv("DB_DATABASE"))
 		return db, err
 	case "pgsql":
+		sslMode, err := m.getPostgresSSLMode()
+		if err != nil {
+			return nil, err
+		}
 		port, err := strconv.Atoi(os.Getenv("DB_PORT"))
 		if err != nil {
 			return nil, err
@@ -57,7 +61,7 @@ func (m *migrationInit) connection() (*sql.DB, error) {
 			os.Getenv("DB_USERNAME"),
 			os.Getenv("DB_PASSWORD"),
 			os.Getenv("DB_DATABASE"),
-			PgsSslMode.Disable,
+			sslMode,
 		)
 		return db, err
 	case "mysql":
@@ -97,4 +101,30 @@ func (m *migrationInit) migrationCount(args []string) (int, error) {
 	}
 
 	return 0, nil
+}
+
+func (m *migrationInit) getPostgresSSLMode() (string, error) {
+	envSSLMOde := os.Getenv("DB_SSLMODE")
+
+	switch envSSLMOde {
+	case "disable", "":
+		return PgsSslMode.Disable, nil
+	case "require":
+		return PgsSslMode.Require, nil
+	case "verify-ca":
+		return PgsSslMode.VerifyCa, nil
+	case "verify-full":
+		return PgsSslMode.VerifyFull, nil
+	case "prefer":
+		return PgsSslMode.Prefer, nil
+	case "allow":
+		return PgsSslMode.Allow, nil
+
+	default:
+		return "", fmt.Errorf(`The provided DB_SSLMODE environment variable is invalid '%s'.,
+Should be one of: disable, require, verify-ca, verify-full, prefer, allow:
+If not set it will default to disable`,
+			envSSLMOde,
+		)
+	}
 }
