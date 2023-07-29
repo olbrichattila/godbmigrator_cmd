@@ -95,7 +95,23 @@ The number of rollbacks and migrates are not mandatory.
 If it is set, for rollbacks it only apply for the last rollback batch
 
 ## .env settings
-Create a .env file into your root directory
+
+If the .env does not exists, the applicaion will read the operating system environment variables.
+If the .env file exists and the operating system variables are also set, the operating system variables are taking priority
+
+Example setting variables in linux, command line:
+```
+export DB_CONNECTION=sqlite
+export DB_DATABASE=./data/database.sqlite
+```
+
+Unset the variables can be done:
+```
+unset DB_CONNECTION
+unset DB_DATABASE
+```
+
+### Create a .env file into your root directory
 Examples:
 
 ### sqlite

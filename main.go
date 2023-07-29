@@ -22,7 +22,7 @@ type migratorInterface interface {
 }
 
 func main() {
-	if err := godotenv.Load(); err != nil {
+	if err := loadEnv(); err != nil {
 		fmt.Println("Error loading .env file:", err)
 		return
 	}
@@ -145,4 +145,19 @@ func removeLastSlashOrBackslash(inputString string) string {
 	}
 
 	return inputString
+}
+
+func fileExists(filename string) bool {
+	_, err := os.Stat(filename)
+	return !os.IsNotExist(err)
+}
+
+func loadEnv() error {
+	if fileExists("./.env") {
+		if err := godotenv.Load(); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
