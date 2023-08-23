@@ -14,3 +14,5 @@ switch-mysql:
 	cp .env.mysql.example .env
 switch-pgsql:
 	cp .env.pgsql.example .env
+switch-firebird:
+	cp .env.firebird.example .env

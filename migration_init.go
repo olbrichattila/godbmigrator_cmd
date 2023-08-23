@@ -77,6 +77,19 @@ func (m *migrationInit) connection() (*sql.DB, error) {
 			os.Getenv("DB_DATABASE"),
 		)
 		return db, err
+	case "firebird":
+		port, err := strconv.Atoi(os.Getenv("DB_PORT"))
+		if err != nil {
+			return nil, err
+		}
+		db, err := NewFirebirdStore(
+			os.Getenv("DB_HOST"),
+			port,
+			os.Getenv("DB_USERNAME"),
+			os.Getenv("DB_PASSWORD"),
+			os.Getenv("DB_DATABASE"),
+		)
+		return db, err
 	default:
 		return nil, fmt.Errorf("Invalid DB_CONNECTION %s", dbConnection)
 	}

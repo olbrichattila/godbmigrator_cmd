@@ -144,6 +144,19 @@ DB_PASSWORD=postgres
 DB_SSLMODE=disable
 ```
 
+### Firebird / Interbase
+```
+DB_CONNECTION=firebird
+DB_HOST=127.0.0.1
+DB_PORT=3050
+DB_DATABASE=/opt/firebird/examples/empbuild/employee.fdb
+DB_USERNAME=SYSDBA
+DB_PASSWORD=masterkey
+
+MIGRATOR_MIGRATION_PATH=./migrations/firebird
+MIGRATOR_MIGRATION_PROVIDER=db
+```
+
 ## Setting migration path
 The path by default is ./migrations
 This can be overwritten by adding the followin variable to your .env file
@@ -169,7 +182,8 @@ make install
 ```
 ## Switch .env file with boilerplate setup for the followin database connections
 ```
-switch-sqlite:
-switch-mysql:
-switch-pgsql:
+make switch-sqlite
+make switch-mysql
+make switch-pgsql
+make switch-firebird
 ```
