@@ -187,3 +187,14 @@ make switch-mysql
 make switch-pgsql
 make switch-firebird
 ```
+
+## Test locally
+### 1. Docker setup:
+
+```
+# Create your docker containers with docker-compose, MySql, FireBird and Postgresql images will be creted exposing the default ports, Change it if required.
+cd docker
+docker-compose up -d
+```
+
+Switch to your testable database with the above make switc-<dbengine> command.
