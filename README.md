@@ -41,34 +41,39 @@ For example:
 ## Command line usage:
 Migrate:
 ```
-go run cmd/cmd.go migrate
+go run . migrate
 ```
 
 Rollback:
 ```
-go run cmd/cmd.go rollback
+go run . rollback
+```
+
+Report:
+```
+go run . report
 ```
 
 Adding new migratio and rollack file:
 ```
-go run cmd/cmd.go add <your custom message>
+go run . add <your custom message>
 ```
 Note: the custom message is not mandatory, in that case the file will be a standard format, like date_time-migration.sql
 
 ### Migrate or rollback specified amount of migrations (like 2)
 Migrate:
 ```
-go run cmd/cmd.go migrate 2
+go run . migrate 2
 ```
 
 Rollback:
 ```
-go run cmd/cmd.go rollback 2
+go run . rollback 2
 ```
 Refresh
 (Refresh is when all applied migration is rolled back and migrated up from scratch)
 ```
-go run cmd/cmd.go refresh
+go run . refresh
 ```
 Here if the count parameter supplied will be ignored
 
@@ -89,6 +94,7 @@ migrator migrate 2
 migrator rollback 2
 
 migrator refresh
+migrator report
 ```
 
 The number of rollbacks and migrates are not mandatory.
@@ -179,6 +185,7 @@ mage migrate
 make rollback
 make refresh
 make install
+make report
 ```
 ## Switch .env file with boilerplate setup for the followin database connections
 ```

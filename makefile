@@ -4,6 +4,8 @@ rollback:
 	go run . rollback
 refresh:
 	go run . refresh
+report:
+	go run . report
 run-test:
 	go test
 install:
