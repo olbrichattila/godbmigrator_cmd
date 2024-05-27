@@ -12,6 +12,7 @@ type spyMigrator struct {
 	refreshCalled     int
 	addCalled         int
 	lastCount         int
+	reportCallCount   int
 	lastAddCustomText string
 }
 
@@ -39,4 +40,10 @@ func (a *spyMigrator) Refresh(db *sql.DB, provider migrator.MigrationProvider, m
 func (a *spyMigrator) AddNewMigrationFiles(migrationPath string, customText string) {
 	a.lastAddCustomText = customText
 	a.addCalled++
+}
+
+func (a *spyMigrator) Report(*sql.DB, migrator.MigrationProvider, string) (string, error) {
+	a.reportCallCount++
+
+	return "report result", nil
 }

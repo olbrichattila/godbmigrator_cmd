@@ -18,6 +18,7 @@ type migratorInterface interface {
 	Migrate(*sql.DB, migrator.MigrationProvider, string, int) error
 	Rollback(*sql.DB, migrator.MigrationProvider, string, int) error
 	Refresh(*sql.DB, migrator.MigrationProvider, string) error
+	Report(*sql.DB, migrator.MigrationProvider, string) (string, error)
 	AddNewMigrationFiles(string, string)
 }
 
@@ -43,13 +44,15 @@ func routeCommandLineParameters(args []string, migrationAdapter migratorInterfac
 			rollback(args, migrationAdapter, migrationInit)
 		case "refresh":
 			refresh(args, migrationAdapter, migrationInit)
+		case "report":
+			report(args, migrationAdapter, migrationInit)
 		case "add":
 			add(args, migrationAdapter)
 		default:
-			return fmt.Errorf("Cannot find command")
+			return fmt.Errorf("cannot find command")
 		}
 	} else {
-		return fmt.Errorf("Invalid parameter count")
+		return fmt.Errorf("invalid parameter count")
 	}
 
 	return nil
@@ -100,6 +103,23 @@ func refresh(args []string, migrationAdapter migratorInterface, migrationInit mi
 	}
 }
 
+func report(args []string, migrationAdapter migratorInterface, migrationInit migrationInitInterface) {
+	fmt.Println("Migration report")
+	conn, provider, _, err := migrationInit.migrationInit(args)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	migrationPath := migrationPath()
+	report, err := migrationAdapter.Report(conn, provider, migrationPath)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Print(report)
+}
+
 func add(args []string, migrationAdapter migratorInterface) {
 	fmt.Println("Adding new migration")
 	customText := ""
@@ -118,6 +138,7 @@ Usage:
 	migrator rollback
 	migrator migrate 2
 	migrator rollback 2
+	migrator report
 
 The number of rollbacks and migrates are not mandatory.
 If it is set, for rollbacks it only apply for the last rollback batch

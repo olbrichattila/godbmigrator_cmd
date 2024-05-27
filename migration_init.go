@@ -91,7 +91,7 @@ func (m *migrationInit) connection() (*sql.DB, error) {
 		)
 		return db, err
 	default:
-		return nil, fmt.Errorf("Invalid DB_CONNECTION %s", dbConnection)
+		return nil, fmt.Errorf("invalid DB_CONNECTION %s", dbConnection)
 	}
 }
 
@@ -104,7 +104,7 @@ func (m *migrationInit) provider(db *sql.DB) (migrator.MigrationProvider, error)
 	case "json":
 		return migrator.NewMigrationProvider("json", nil)
 	default:
-		return nil, fmt.Errorf("Migration provider for type %s does not exists", migrationProvider)
+		return nil, fmt.Errorf("migration provider for type %s does not exists", migrationProvider)
 	}
 }
 
@@ -134,7 +134,7 @@ func (m *migrationInit) getPostgresSSLMode() (string, error) {
 		return PgsSslMode.Allow, nil
 
 	default:
-		return "", fmt.Errorf(`The provided DB_SSLMODE environment variable is invalid '%s'.,
+		return "", fmt.Errorf(`the provided DB_SSLMODE environment variable is invalid '%s'.,
 Should be one of: disable, require, verify-ca, verify-full, prefer, allow:
 If not set it will default to disable`,
 			envSSLMOde,

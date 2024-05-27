@@ -176,3 +176,14 @@ func (t *TestSuite) TestCommandLineCalledWithAddCustomText() {
 	// Assert hyphen is added
 	t.Equal("-"+expectedText, spyMigrator.lastAddCustomText)
 }
+
+func (t *TestSuite) TestReportCalled() {
+	spyMigrator := newSpyMigrator()
+	newMigrationInitSpy := newMigrationInitSpy()
+	args := []string{"cmd", "report"}
+
+	err := routeCommandLineParameters(args, spyMigrator, newMigrationInitSpy)
+	t.Nil(err)
+
+	t.Equal(1, spyMigrator.reportCallCount)
+}

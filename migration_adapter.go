@@ -28,3 +28,7 @@ func (a *migrationAdapter) Refresh(db *sql.DB, provider migrator.MigrationProvid
 func (a *migrationAdapter) AddNewMigrationFiles(migrationPath string, customText string) {
 	migrator.AddNewMigrationFiles(migrationPath, customText)
 }
+
+func (a *migrationAdapter) Report(db *sql.DB, provider migrator.MigrationProvider, migrationPath string) (string, error) {
+	return migrator.Report(db, provider, migrationPath)
+}
