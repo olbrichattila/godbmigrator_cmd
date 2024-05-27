@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql_container
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: migrator
+      MYSQL_USER: migrator
+      MYSQL_PASSWORD: H8E7kU8Y
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres_container
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  firebird:
+    image: jacobalberty/firebird:latest
+    container_name: firebird_container
+    environment:
+      ISC_PASSWORD: masterkey
+    ports:
+      - "3050:3050"
+    volumes:
+      - ./firebird_data/init_db.sh:/docker-entrypoint-initdb.d/init_db.sh:ro
+      - firebird_data:/firebird
+
+volumes:
+  mysql_data:
+  postgres_data:
+  firebird_data:
