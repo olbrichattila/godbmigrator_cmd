@@ -139,6 +139,7 @@ Usage:
 	migrator migrate 2
 	migrator rollback 2
 	migrator report
+	migrator add <optional suffix>
 
 The number of rollbacks and migrates are not mandatory.
 If it is set, for rollbacks it only apply for the last rollback batch

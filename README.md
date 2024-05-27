@@ -205,3 +205,22 @@ docker-compose up -d
 ```
 
 Switch to your testable database with the above make switc-<dbengine> command.
+
+Check your .env file for migration path:
+
+```
+MIGRATOR_MIGRATION_PATH=./migrations/new
+```
+
+and create a folder if not exists:
+```
+mkdir -p ./migrations/new
+```
+
+Add your migrations:
+```
+go run . add <optonally a file name suffix>
+```
+
+Fill in your migration and rollback file you created, then try migrate, rollback, (with number parameters) and report as explained above
+
