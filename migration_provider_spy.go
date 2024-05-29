@@ -3,7 +3,7 @@ package main
 type migrationProviderSpy struct {
 }
 
-func (s *migrationProviderSpy) SetJsonFilePath(string) {
+func (s *migrationProviderSpy) SetJSONFilePath(string) {
 }
 
 func newMigrationSpyProvider() *migrationProviderSpy {
@@ -22,14 +22,14 @@ func (s migrationProviderSpy) RemoveFromMigration(string) error {
 	return nil
 }
 
-func (s migrationProviderSpy) MigrationExistsForFile(string) bool {
-	return false
+func (s migrationProviderSpy) MigrationExistsForFile(string) (bool, error) {
+	return false, nil
 }
 
 func (s migrationProviderSpy) ResetDate() {
 }
 
-func (s migrationProviderSpy) GetJsonFileName() string {
+func (s migrationProviderSpy) GetJSONFileName() string {
 	return "./mockjson.json"
 }
 
