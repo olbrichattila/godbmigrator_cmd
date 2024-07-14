@@ -1,14 +1,14 @@
 module github.com/olbrichattila/godbmigrator_cmd
 
-go 1.18
+go 1.22.5
 
 require (
 	github.com/go-sql-driver/mysql v1.8.1
 	github.com/joho/godotenv v1.5.1
 	github.com/lib/pq v1.10.9
 	github.com/mattn/go-sqlite3 v1.14.22
-	github.com/nakagami/firebirdsql v0.9.9
-	github.com/olbrichattila/godbmigrator v1.1.11
+	github.com/nakagami/firebirdsql v0.9.10
+	github.com/olbrichattila/godbmigrator v1.1.12
 	github.com/stretchr/testify v1.9.0
 )
 
