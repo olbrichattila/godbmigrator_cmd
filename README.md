@@ -110,7 +110,7 @@ If it is set, for rollbacks it only apply for the last rollback batch
 
 ## .env.migrator settings
 
-If the .env.migrator does not exists, the applicaion will read the operating system environment variables.
+If the .env.migrator does not exists, the application will read the operating system environment variables.
 If the .env.migrator file exists and the operating system variables are also set, the operating system variables are taking priority
 
 Example setting variables in linux, command line:
