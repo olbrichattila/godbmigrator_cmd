@@ -11,13 +11,13 @@ run-test:
 install:
 	go build -o ./build/migrator .
 switch-sqlite:
-	cp .env.sqlite.example .env
+	cp .env.sqlite.example .env.migrator
 switch-mysql:
-	cp .env.mysql.example .env
+	cp .env.mysql.example .env.migrator
 switch-pgsql:
-	cp .env.pgsql.example .env
+	cp .env.pgsql.example .env.migrator
 switch-firebird:
-	cp .env.firebird.example .env
+	cp .env.firebird.example .env.migrator
 lint:
 	gocritic check ./...
 	revive ./...
@@ -26,3 +26,4 @@ lint:
 	golangci-lint run
 	go vet ./...
 	staticcheck ./...
+	

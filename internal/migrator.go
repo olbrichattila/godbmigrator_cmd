@@ -10,6 +10,7 @@ import (
 )
 
 const (
+	envFileName          = ".env.migrator"
 	defaultMigrationPath = "./migrations"
 	messageRollingBack   = "Rolling back"
 )
@@ -22,10 +23,10 @@ type migratorInterface interface {
 	AddNewMigrationFiles(string, string) error
 }
 
-// Init starts migration command, reads .env and command line arguments, and execute what was requested
+// Init starts migration command, reads .env.migrator and command line arguments, and execute what was requested
 func Init() {
 	if err := loadEnv(); err != nil {
-		fmt.Println("Error loading .env file:", err)
+		fmt.Printf("Error loading %s file:%s\n", err.Error(), envFileName)
 		return
 	}
 
@@ -49,6 +50,8 @@ func routeCommandLineParameters(args []string, migrationAdapter migratorInterfac
 			report(args, migrationAdapter, migrationInit)
 		case "add":
 			add(args, migrationAdapter)
+		case "help":
+			displayFullHelp()
 		default:
 			return fmt.Errorf("cannot find command")
 		}
@@ -145,6 +148,9 @@ Usage:
 	migrator report
 	migrator add <optional suffix>
 
+For help how to set up:
+	migrator help
+
 The number of rollbacks and migrates are not mandatory.
 If it is set, for rollbacks it only apply for the last rollback batch
 
@@ -179,8 +185,8 @@ func fileExists(filename string) bool {
 }
 
 func loadEnv() error {
-	if fileExists("./.env") {
-		if err := godotenv.Load(); err != nil {
+	if fileExists(envFileName) {
+		if err := godotenv.Load(envFileName); err != nil {
 			return err
 		}
 	}

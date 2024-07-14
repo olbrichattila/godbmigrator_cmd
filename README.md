@@ -2,6 +2,14 @@
 
 ## Create migration SQL files
 
+## Install.
+
+If can install as a CLI tool:
+```
+go install github.com/olbrichattila/godbmigrator_cmd/cmd/migrator@latest
+```
+
+
 If you would like to build the migration into your application, please see:
 https://github.com/olbrichattila/godbmigrator/
 
@@ -100,10 +108,10 @@ migrator report
 The number of rollbacks and migrates are not mandatory.
 If it is set, for rollbacks it only apply for the last rollback batch
 
-## .env settings
+## .env.migrator settings
 
-If the .env does not exists, the applicaion will read the operating system environment variables.
-If the .env file exists and the operating system variables are also set, the operating system variables are taking priority
+If the .env.migrator does not exists, the applicaion will read the operating system environment variables.
+If the .env.migrator file exists and the operating system variables are also set, the operating system variables are taking priority
 
 Example setting variables in linux, command line:
 ```
