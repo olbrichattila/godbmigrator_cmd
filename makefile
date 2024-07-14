@@ -1,13 +1,13 @@
 migrate:
-	go run . migrate
+	go run ./cmd/migrator/ migrate
 rollback:
-	go run . rollback
+	go run ./cmd/migrator/ rollback
 refresh:
-	go run . refresh
+	go run ./cmd/migrator/ refresh
 report:
-	go run . report
+	go run ./cmd/migrator/ report
 run-test:
-	go test
+	go test -v ./...
 install:
 	go build -o ./build/migrator .
 switch-sqlite:
@@ -18,3 +18,11 @@ switch-pgsql:
 	cp .env.pgsql.example .env
 switch-firebird:
 	cp .env.firebird.example .env
+lint:
+	gocritic check ./...
+	revive ./...
+	golint ./...
+	goconst ./...
+	golangci-lint run
+	go vet ./...
+	staticcheck ./...

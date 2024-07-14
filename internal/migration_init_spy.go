@@ -1,4 +1,4 @@
-package main
+package migrator
 
 import (
 	"database/sql"
@@ -15,7 +15,7 @@ func newMigrationInitSpy() *migrationInitSpy {
 }
 
 func (m *migrationInitSpy) migrationInit(args []string) (*sql.DB, migrator.MigrationProvider, int, error) {
-	conn, err := sql.Open("sqlite3", ":memory:")
+	conn, err := sql.Open(driverTypeSqLite, ":memory:")
 	if err != nil {
 		return nil, nil, 0, err
 	}

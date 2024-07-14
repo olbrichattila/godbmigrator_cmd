@@ -1,4 +1,4 @@
-package main
+package migrator
 
 import (
 	"database/sql"
@@ -20,26 +20,27 @@ func newSpyMigrator() *spyMigrator {
 	return &spyMigrator{}
 }
 
-func (a *spyMigrator) Migrate(db *sql.DB, provider migrator.MigrationProvider, migrationPath string, count int) error {
+func (a *spyMigrator) Migrate(_ *sql.DB, _ migrator.MigrationProvider, _ string, count int) error {
 	a.migrateCalled++
 	a.lastCount = count
 	return nil
 }
 
-func (a *spyMigrator) Rollback(db *sql.DB, provider migrator.MigrationProvider, migrationPath string, count int) error {
+func (a *spyMigrator) Rollback(_ *sql.DB, _ migrator.MigrationProvider, _ string, count int) error {
 	a.rollbackCalled++
 	a.lastCount = count
 	return nil
 }
 
-func (a *spyMigrator) Refresh(db *sql.DB, provider migrator.MigrationProvider, migrationPath string) error {
+func (a *spyMigrator) Refresh(_ *sql.DB, _ migrator.MigrationProvider, _ string) error {
 	a.refreshCalled++
 	return nil
 }
 
-func (a *spyMigrator) AddNewMigrationFiles(migrationPath string, customText string) {
+func (a *spyMigrator) AddNewMigrationFiles(_ string, customText string) error {
 	a.lastAddCustomText = customText
 	a.addCalled++
+	return nil
 }
 
 func (a *spyMigrator) Report(*sql.DB, migrator.MigrationProvider, string) (string, error) {

@@ -1,4 +1,4 @@
-package main
+package migrator
 
 import (
 	"database/sql"
@@ -9,7 +9,7 @@ import (
 type migrationAdapter struct {
 }
 
-func NewMigrationAdapter() *migrationAdapter {
+func newMigrationAdapter() *migrationAdapter {
 	return &migrationAdapter{}
 }
 
@@ -25,8 +25,8 @@ func (a *migrationAdapter) Refresh(db *sql.DB, provider migrator.MigrationProvid
 	return migrator.Refresh(db, provider, migrationPath)
 }
 
-func (a *migrationAdapter) AddNewMigrationFiles(migrationPath string, customText string) {
-	migrator.AddNewMigrationFiles(migrationPath, customText)
+func (a *migrationAdapter) AddNewMigrationFiles(migrationPath string, customText string) error {
+	return migrator.AddNewMigrationFiles(migrationPath, customText)
 }
 
 func (a *migrationAdapter) Report(db *sql.DB, provider migrator.MigrationProvider, migrationPath string) (string, error) {

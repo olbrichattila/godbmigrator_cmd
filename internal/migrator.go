@@ -1,4 +1,4 @@
-package main
+package migrator
 
 import (
 	"database/sql"
@@ -9,26 +9,27 @@ import (
 	migrator "github.com/olbrichattila/godbmigrator"
 )
 
-const defaultMigrationPath = "./migrations"
-
-type providerInterface interface {
-}
+const (
+	defaultMigrationPath = "./migrations"
+	messageRollingBack   = "Rolling back"
+)
 
 type migratorInterface interface {
 	Migrate(*sql.DB, migrator.MigrationProvider, string, int) error
 	Rollback(*sql.DB, migrator.MigrationProvider, string, int) error
 	Refresh(*sql.DB, migrator.MigrationProvider, string) error
 	Report(*sql.DB, migrator.MigrationProvider, string) (string, error)
-	AddNewMigrationFiles(string, string)
+	AddNewMigrationFiles(string, string) error
 }
 
-func main() {
+// Init starts migration command, reads .env and command line arguments, and execute what was requested
+func Init() {
 	if err := loadEnv(); err != nil {
 		fmt.Println("Error loading .env file:", err)
 		return
 	}
 
-	migrationAdapter := NewMigrationAdapter()
+	migrationAdapter := newMigrationAdapter()
 	migrationInit := newMigrationInit()
 	if err := routeCommandLineParameters(os.Args, migrationAdapter, migrationInit); err != nil {
 		displayUsage()
@@ -74,7 +75,7 @@ func migrate(args []string, migrationAdapter migratorInterface, migrationInit mi
 }
 
 func rollback(args []string, migrationAdapter migratorInterface, migrationInit migrationInitInterface) {
-	fmt.Println("Rolling back")
+	fmt.Println(messageRollingBack)
 	conn, provider, count, err := migrationInit.migrationInit(args)
 	if err != nil {
 		fmt.Println(err)
@@ -89,7 +90,7 @@ func rollback(args []string, migrationAdapter migratorInterface, migrationInit m
 }
 
 func refresh(args []string, migrationAdapter migratorInterface, migrationInit migrationInitInterface) {
-	fmt.Println("Rolling back")
+	fmt.Println(messageRollingBack)
 	conn, provider, _, err := migrationInit.migrationInit(args)
 	if err != nil {
 		fmt.Println(err)
@@ -128,7 +129,10 @@ func add(args []string, migrationAdapter migratorInterface) {
 	}
 
 	migrationPath := migrationPath()
-	migrationAdapter.AddNewMigrationFiles(migrationPath, customText)
+	err := migrationAdapter.AddNewMigrationFiles(migrationPath, customText)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func displayUsage() {

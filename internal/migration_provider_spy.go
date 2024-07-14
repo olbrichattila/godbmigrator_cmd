@@ -1,4 +1,4 @@
-package main
+package migrator
 
 type migrationProviderSpy struct {
 }

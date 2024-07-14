@@ -1,13 +1,14 @@
-package main
+package migrator
 
 import (
 	"database/sql"
 	"fmt"
 
+	// This needs to be blank imported as not directly referenced, but required
 	_ "github.com/lib/pq"
 )
 
-type pgsSslMode struct {
+type pgsSSLModeTypes struct {
 	Disable    string
 	Require    string
 	VerifyCa   string
@@ -16,7 +17,7 @@ type pgsSslMode struct {
 	Allow      string
 }
 
-var PgsSslMode = &pgsSslMode{
+var pgsSSLMode = &pgsSSLModeTypes{
 	Disable:    "disable",
 	Require:    "require",
 	VerifyCa:   "verify-ca",
@@ -25,7 +26,7 @@ var PgsSslMode = &pgsSslMode{
 	Allow:      "allow",
 }
 
-func NewPostgresStore(
+func newPostgresStore(
 	host string,
 	port int,
 	user,

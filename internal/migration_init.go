@@ -1,4 +1,4 @@
-package main
+package migrator
 
 import (
 	"database/sql"
@@ -7,6 +7,14 @@ import (
 	"strconv"
 
 	migrator "github.com/olbrichattila/godbmigrator"
+)
+
+const (
+	envDBHost     = "DB_HOST"
+	envDBUserName = "DB_USERNAME"
+	envDBPassword = "DB_PASSWORD"
+	envDBDatabase = "DB_DATABASE"
+	envDBPort     = "DB_PORT"
 )
 
 type migrationInitInterface interface {
@@ -43,51 +51,51 @@ func (m *migrationInit) connection() (*sql.DB, error) {
 	dbConnection := os.Getenv("DB_CONNECTION")
 
 	switch dbConnection {
-	case "sqlite":
-		db, err := NewSqliteStore(os.Getenv("DB_DATABASE"))
+	case providerSqLiteDataType:
+		db, err := newSqliteStore(os.Getenv(envDBDatabase))
 		return db, err
-	case "pgsql":
+	case providerPgSQLDataType:
 		sslMode, err := m.getPostgresSSLMode()
 		if err != nil {
 			return nil, err
 		}
-		port, err := strconv.Atoi(os.Getenv("DB_PORT"))
+		port, err := strconv.Atoi(os.Getenv(envDBPort))
 		if err != nil {
 			return nil, err
 		}
-		db, err := NewPostgresStore(
-			os.Getenv("DB_HOST"),
+		db, err := newPostgresStore(
+			os.Getenv(envDBHost),
 			port,
-			os.Getenv("DB_USERNAME"),
-			os.Getenv("DB_PASSWORD"),
-			os.Getenv("DB_DATABASE"),
+			os.Getenv(envDBUserName),
+			os.Getenv(envDBPassword),
+			os.Getenv(envDBDatabase),
 			sslMode,
 		)
 		return db, err
-	case "mysql":
-		port, err := strconv.Atoi(os.Getenv("DB_PORT"))
+	case providerMySQLDataType:
+		port, err := strconv.Atoi(os.Getenv(envDBPort))
 		if err != nil {
 			return nil, err
 		}
-		db, err := NewMysqlStore(
-			os.Getenv("DB_HOST"),
+		db, err := newMysqlStore(
+			os.Getenv(envDBHost),
 			port,
-			os.Getenv("DB_USERNAME"),
-			os.Getenv("DB_PASSWORD"),
-			os.Getenv("DB_DATABASE"),
+			os.Getenv(envDBUserName),
+			os.Getenv(envDBPassword),
+			os.Getenv(envDBDatabase),
 		)
 		return db, err
-	case "firebird":
-		port, err := strconv.Atoi(os.Getenv("DB_PORT"))
+	case providerFirebirdDataType:
+		port, err := strconv.Atoi(os.Getenv(envDBPort))
 		if err != nil {
 			return nil, err
 		}
-		db, err := NewFirebirdStore(
-			os.Getenv("DB_HOST"),
+		db, err := newFirebirdStore(
+			os.Getenv(envDBHost),
 			port,
-			os.Getenv("DB_USERNAME"),
-			os.Getenv("DB_PASSWORD"),
-			os.Getenv("DB_DATABASE"),
+			os.Getenv(envDBUserName),
+			os.Getenv(envDBPassword),
+			os.Getenv(envDBDatabase),
 		)
 		return db, err
 	default:
@@ -99,10 +107,10 @@ func (m *migrationInit) provider(db *sql.DB) (migrator.MigrationProvider, error)
 	migrationProvider := os.Getenv("MIGRATOR_MIGRATION_PROVIDER")
 
 	switch migrationProvider {
-	case "db", "":
-		return migrator.NewMigrationProvider("db", db)
-	case "json":
-		return migrator.NewMigrationProvider("json", nil)
+	case providerTypeDB, "":
+		return migrator.NewMigrationProvider(providerTypeDB, db)
+	case providerTypeJSON:
+		return migrator.NewMigrationProvider(providerTypeJSON, nil)
 	default:
 		return nil, fmt.Errorf("migration provider for type %s does not exists", migrationProvider)
 	}
@@ -121,17 +129,17 @@ func (m *migrationInit) getPostgresSSLMode() (string, error) {
 
 	switch envSSLMOde {
 	case "disable", "":
-		return PgsSslMode.Disable, nil
+		return pgsSSLMode.Disable, nil
 	case "require":
-		return PgsSslMode.Require, nil
+		return pgsSSLMode.Require, nil
 	case "verify-ca":
-		return PgsSslMode.VerifyCa, nil
+		return pgsSSLMode.VerifyCa, nil
 	case "verify-full":
-		return PgsSslMode.VerifyFull, nil
+		return pgsSSLMode.VerifyFull, nil
 	case "prefer":
-		return PgsSslMode.Prefer, nil
+		return pgsSSLMode.Prefer, nil
 	case "allow":
-		return PgsSslMode.Allow, nil
+		return pgsSSLMode.Allow, nil
 
 	default:
 		return "", fmt.Errorf(`the provided DB_SSLMODE environment variable is invalid '%s'.,

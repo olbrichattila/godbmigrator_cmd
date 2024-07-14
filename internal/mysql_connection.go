@@ -1,13 +1,14 @@
-package main
+package migrator
 
 import (
 	"database/sql"
 	"fmt"
 
-	_ "github.com/nakagami/firebirdsql"
+	// This needs to be blank imported as not directly referenced, but required
+	_ "github.com/go-sql-driver/mysql"
 )
 
-func NewFirebirdStore(
+func newMysqlStore(
 	host string,
 	port int,
 	user,
@@ -15,14 +16,14 @@ func NewFirebirdStore(
 	dbname string,
 ) (*sql.DB, error) {
 	connStr := fmt.Sprintf(
-		"%s:%s@%s:%d%s",
+		"%s:%s@tcp(%s:%d)/%s",
 		user,
 		password,
 		host,
 		port,
 		dbname)
 
-	db, err := sql.Open("firebirdsql", connStr)
+	db, err := sql.Open("mysql", connStr)
 	if err != nil {
 		return nil, err
 	}
