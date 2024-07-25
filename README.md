@@ -29,21 +29,14 @@ If the db provider is user, then a migrations table will be created in the same 
 Follow the structure:
 [id]-migrate-[custom-content].sql
 
-The files will be processed in ascending order, therefore it is important to create an id as follows:
+The files will be processed in ascending order, therefore it is important to add an ID or date/time before:
+Alternatively use ```migrator add <optional suffix>``` which creates the proper format for you:
 For example:
 ```
-0001-migrate.sql
-0001-rollback.sql
-0002-migrate.sql
-0002-rollback.sql
-0003-migrate.sql
-0003-rollback.sql
-0004-migrate.sql
-0004-rollback.sql
-0005-migrate-new.sql
-0005-rollback-new.sql
-0006-migrate-new.sql
-0006-rollback-new.sql
+2024-05-27_19_49_38-migrate.sql
+2024-05-27_19_49_38-rollback.sql
+2024-05-27_19_50_04-migrate.sql
+2024-05-27_19_50_04-rollback.sql
 ```
 
 ## Command line usage:
@@ -127,11 +120,13 @@ unset DB_DATABASE
 
 ### Create a .env file into your root directory
 Examples:
+Note: ```TABLE_PREFIX``` is non mandatory, if not set, the migration table prefix will be ```olb``` (example ```olb_migrations```, ```olb_migration_reports```)
 
 ### sqlite
 ```
 DB_CONNECTION=sqlite
 DB_DATABASE=./data/database.sqlite
+TABLE_PREFIX="my_prefix"
 ```
 
 ### MySql
@@ -142,6 +137,7 @@ DB_PORT=3306
 DB_DATABASE=migrator
 DB_USERNAME=root
 DB_PASSWORD=password
+TABLE_PREFIX="my_prefix"
 ```
 
 ### Postgres
@@ -152,6 +148,7 @@ DB_PORT=5432
 DB_DATABASE=postgres
 DB_USERNAME=postgres
 DB_PASSWORD=postgres
+TABLE_PREFIX="my_prefix"
 
 # non mandatory, it defaults to disable
 # possible values are: disable, require, verify-ca, verify-full, prefer, allow (depending on your setup)
@@ -166,6 +163,7 @@ DB_PORT=3050
 DB_DATABASE=/opt/firebird/examples/empbuild/employee.fdb
 DB_USERNAME=SYSDBA
 DB_PASSWORD=masterkey
+TABLE_PREFIX="my_prefix"
 
 MIGRATOR_MIGRATION_PATH=./migrations/firebird
 MIGRATOR_MIGRATION_PROVIDER=db

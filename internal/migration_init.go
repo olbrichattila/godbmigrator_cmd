@@ -10,6 +10,7 @@ import (
 )
 
 const (
+	defaultPrefix = "olb"
 	envDBHost     = "DB_HOST"
 	envDBUserName = "DB_USERNAME"
 	envDBPassword = "DB_PASSWORD"
@@ -105,12 +106,16 @@ func (m *migrationInit) connection() (*sql.DB, error) {
 
 func (m *migrationInit) provider(db *sql.DB) (migrator.MigrationProvider, error) {
 	migrationProvider := os.Getenv("MIGRATOR_MIGRATION_PROVIDER")
+	tablePrefix := os.Getenv("TABLE_PREFIX")
+	if tablePrefix == "" {
+		tablePrefix = defaultPrefix
+	}
 
 	switch migrationProvider {
 	case providerTypeDB, "":
-		return migrator.NewMigrationProvider(providerTypeDB, db)
+		return migrator.NewMigrationProvider(providerTypeDB, tablePrefix, db)
 	case providerTypeJSON:
-		return migrator.NewMigrationProvider(providerTypeJSON, nil)
+		return migrator.NewMigrationProvider(providerTypeJSON, tablePrefix, nil)
 	default:
 		return nil, fmt.Errorf("migration provider for type %s does not exists", migrationProvider)
 	}
