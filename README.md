@@ -1,32 +1,31 @@
-# Golang Database migrator
+# Golang Database Migrator
 
-## Create migration SQL files
+## Create Migration SQL Files
 
-## Install.
+## Installation
 
-If can install as a CLI tool:
+To install as a CLI tool:
 ```
 go install github.com/olbrichattila/godbmigrator_cmd/cmd/migrator@latest
 ```
 
 
-If you would like to build the migration into your application, please see:
+If you'd like to integrate the migration into your application, please refer to:
 https://github.com/olbrichattila/godbmigrator/
 
 
 ## What is the provider?
-Currently it supports two type of migration provider, json and database.
-This is the way the migrator knows which migration was executed and when.
+Currently, it supports two types of migration providers: JSON and Database. The provider helps the migrator track which migrations were executed and when.
 
-If the json provider is used, then a json file will be saved next to the migration files:
+When using the JSON provider, a JSON file will be saved next to the migration files:
 ```
 ./migrations/migrations.json
 ```
 
-If the db provider is user, then a migrations table will be created in the same database where you are migrating to.
+If the Database provider is used, a migrations table will be created in the same database to which you are migrating.
 
-## Migration file structure
-Follow the structure:
+## Migration File Structure
+Follow this structure:
 [id]-migrate-[custom-content].sql
 
 The files will be processed in ascending order, therefore it is important to add an ID or date/time before:
@@ -230,3 +229,7 @@ go run . add <optonally a file name suffix>
 
 Fill in your migration and rollback file you created, then try migrate, rollback, (with number parameters) and report as explained above
 
+
+## About me:
+- Learn more about me on my personal website. https://attilaolbrich.co.uk/menu/my-story
+- Check out my latest blog blog at my personal page. https://attilaolbrich.co.uk/blog/1/single
