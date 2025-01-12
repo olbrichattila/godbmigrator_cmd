@@ -95,10 +95,12 @@ migrator rollback 2
 
 migrator refresh
 migrator report
+migrator validate
 ```
 
 The number of rollbacks and migrates are not mandatory.
 If it is set, for rollbacks it only apply for the last rollback batch
+Validate checks if any migration file changed since last applied
 
 ## .env.migrator settings
 

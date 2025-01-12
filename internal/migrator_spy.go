@@ -48,3 +48,6 @@ func (a *spyMigrator) Report(*sql.DB, migrator.MigrationProvider, string) (strin
 
 	return "report result", nil
 }
+func (a *spyMigrator) ChecksumValidation(*sql.DB, migrator.MigrationProvider, string) []string {
+	return []string{}
+}

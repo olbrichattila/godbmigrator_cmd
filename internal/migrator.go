@@ -20,6 +20,7 @@ type migratorInterface interface {
 	Rollback(*sql.DB, migrator.MigrationProvider, string, int) error
 	Refresh(*sql.DB, migrator.MigrationProvider, string) error
 	Report(*sql.DB, migrator.MigrationProvider, string) (string, error)
+	ChecksumValidation(*sql.DB, migrator.MigrationProvider, string) []string
 	AddNewMigrationFiles(string, string) error
 }
 
@@ -50,6 +51,8 @@ func routeCommandLineParameters(args []string, migrationAdapter migratorInterfac
 			report(args, migrationAdapter, migrationInit)
 		case "add":
 			add(args, migrationAdapter)
+		case "validate":
+			validate(args, migrationAdapter, migrationInit)
 		case "help":
 			displayFullHelp()
 		default:
@@ -138,6 +141,24 @@ func add(args []string, migrationAdapter migratorInterface) {
 	}
 }
 
+func validate(args []string, migrationAdapter migratorInterface, migrationInit migrationInitInterface) {
+	fmt.Println("Validating")
+	conn, provider, _, err := migrationInit.migrationInit(args)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	migrationPath := migrationPath()
+	errors := migrationAdapter.ChecksumValidation(conn, provider, migrationPath)
+
+	for _, errorString := range errors {
+		fmt.Println(" - " + errorString)
+	}
+	
+	fmt.Println("Done.")
+}
+
 func displayUsage() {
 	fmt.Printf(`
 Usage:
@@ -146,6 +167,7 @@ Usage:
 	migrator migrate 2
 	migrator rollback 2
 	migrator report
+	migrator validate
 	migrator add <optional suffix>
 
 For help how to set up:
@@ -153,7 +175,7 @@ For help how to set up:
 
 The number of rollbacks and migrates are not mandatory.
 If it is set, for rollbacks it only apply for the last rollback batch
-
+validate verifies if any migration file changed since applied
 `)
 }
 

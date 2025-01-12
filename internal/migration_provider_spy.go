@@ -1,5 +1,7 @@
 package migrator
 
+import migrator "github.com/olbrichattila/godbmigrator"
+
 type migrationProviderSpy struct {
 }
 
@@ -10,11 +12,11 @@ func newMigrationSpyProvider() *migrationProviderSpy {
 	return &migrationProviderSpy{}
 }
 
-func (s migrationProviderSpy) Migrations(bool) ([]string, error) {
-	return []string{}, nil
+func (s migrationProviderSpy) Migrations(bool) ([]migrator.MigrationRow, error) {
+	return []migrator.MigrationRow{}, nil
 }
 
-func (s migrationProviderSpy) AddToMigration(string) error {
+func (s migrationProviderSpy) AddToMigration(string, string) error {
 	return nil
 }
 
