@@ -32,3 +32,7 @@ func (a *migrationAdapter) AddNewMigrationFiles(migrationPath string, customText
 func (a *migrationAdapter) Report(db *sql.DB, provider migrator.MigrationProvider, migrationPath string) (string, error) {
 	return migrator.Report(db, provider, migrationPath)
 }
+
+func (a *migrationAdapter) ChecksumValidation(db *sql.DB, provider migrator.MigrationProvider, migrationPath string) ([]string) {
+	return migrator.ChecksumValidation(db, provider, migrationPath)
+}
