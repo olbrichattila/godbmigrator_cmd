@@ -192,6 +192,9 @@ Usage:
 For help how to set up:
 	migrator help
 
+Options:
+	-no-verify (skip checksum verification)	
+
 The number of rollbacks and migrates are not mandatory.
 If it is set, for rollbacks it only apply for the last rollback batch
 validate verifies if any migration file changed since applied

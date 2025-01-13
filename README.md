@@ -98,6 +98,9 @@ migrator report
 migrator validate
 ```
 
+### Available flags:
+```-no-verify``` This flag will skip checksum verification
+
 The number of rollbacks and migrates are not mandatory.
 If it is set, for rollbacks it only apply for the last rollback batch
 Validate checks if any migration file changed since last applied
