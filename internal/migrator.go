@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/joho/godotenv"
 	migrator "github.com/olbrichattila/godbmigrator"
@@ -13,6 +14,10 @@ const (
 	envFileName          = ".env.migrator"
 	defaultMigrationPath = "./migrations"
 	messageRollingBack   = "Rolling back"
+
+	// Colors
+	consoleColorRed = "\033[31m"
+	consoleReset = "\033[0m"
 )
 
 type migratorInterface interface {
@@ -33,7 +38,8 @@ func Init() {
 
 	migrationAdapter := newMigrationAdapter()
 	migrationInit := newMigrationInit()
-	if err := routeCommandLineParameters(os.Args, migrationAdapter, migrationInit); err != nil {
+	filteredArgs := filterArgs(os.Args)
+	if err := routeCommandLineParameters(filteredArgs, migrationAdapter, migrationInit); err != nil {
 		displayUsage()
 	}
 }
@@ -74,6 +80,19 @@ func migrate(args []string, migrationAdapter migratorInterface, migrationInit mi
 	}
 
 	migrationPath := migrationPath()
+	
+	flagArgs := flagArgs();
+	if _, ok := flagArgs["-no-verify"]; !ok {
+		errors := migrationAdapter.ChecksumValidation(conn, provider, migrationPath)
+		for _, errorString := range errors {
+			fmt.Println(" - " + errorString)
+		}
+		if len(errors) > 0 {
+			fmt.Printf(consoleColorRed + "\nMigration cannot run due to a checksum verification error. Please resolve the issue above or, alternatively, run the migration with the --no-verify flag.\n\n" + consoleReset)
+			return
+		}
+	}
+
 	err = migrationAdapter.Migrate(conn, provider, migrationPath, count)
 	if err != nil {
 		fmt.Println(err)
@@ -199,6 +218,34 @@ func removeLastSlashOrBackslash(inputString string) string {
 	}
 
 	return inputString
+}
+
+func filterArgs(args []string) []string {
+	var filtered []string
+	for _, str := range args {
+		if !strings.HasPrefix(str, "-") {
+			filtered = append(filtered, str)
+		}
+	}
+
+	return filtered;
+}
+
+func flagArgs() map[string]string {
+	filtered := make(map[string]string, 0)
+	for _, str := range os.Args {
+		if strings.HasPrefix(str, "-") {
+			argParts := strings.Split(str, "=")
+			value := "";
+			if len(argParts) > 1 {
+				value = argParts[1]
+			}
+
+			filtered[str] = value
+		}
+	}
+
+	return filtered;
 }
 
 func fileExists(filename string) bool {
