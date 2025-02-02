@@ -33,6 +33,14 @@ func (a *migrationAdapter) Report(db *sql.DB, provider migrator.MigrationProvide
 	return migrator.Report(db, provider, migrationPath)
 }
 
-func (a *migrationAdapter) ChecksumValidation(db *sql.DB, provider migrator.MigrationProvider, migrationPath string) ([]string) {
+func (a *migrationAdapter) ChecksumValidation(db *sql.DB, provider migrator.MigrationProvider, migrationPath string) []string {
 	return migrator.ChecksumValidation(db, provider, migrationPath)
+}
+
+func (a *migrationAdapter) SaveBaseline(db *sql.DB, migrationFilePath string) error {
+	return migrator.SaveBaseline(db, migrationFilePath)
+}
+
+func (a *migrationAdapter) LoadBaseline(db *sql.DB, migrationFilePath string) error {
+	return migrator.LoadBaseline(db, migrationFilePath)
 }

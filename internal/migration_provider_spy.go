@@ -42,3 +42,7 @@ func (s migrationProviderSpy) Report() (string, error) {
 func (s *migrationProviderSpy) AddToMigrationReport(string, error) error {
 	return nil
 }
+
+func (s *migrationProviderSpy) CreateMigrationTables() error {
+	return nil
+}

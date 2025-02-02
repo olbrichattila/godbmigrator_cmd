@@ -14,7 +14,7 @@ func newMigrationInitSpy() *migrationInitSpy {
 	return &migrationInitSpy{}
 }
 
-func (m *migrationInitSpy) migrationInit(args []string) (*sql.DB, migrator.MigrationProvider, int, error) {
+func (m *migrationInitSpy) migrationInit(args []string, initMigrationTables bool) (*sql.DB, migrator.MigrationProvider, int, error) {
 	conn, err := sql.Open(driverTypeSqLite, ":memory:")
 	if err != nil {
 		return nil, nil, 0, err

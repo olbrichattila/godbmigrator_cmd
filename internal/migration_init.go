@@ -19,7 +19,7 @@ const (
 )
 
 type migrationInitInterface interface {
-	migrationInit(args []string) (*sql.DB, migrator.MigrationProvider, int, error)
+	migrationInit(args []string, initMigrationTables bool) (*sql.DB, migrator.MigrationProvider, int, error)
 }
 
 type migrationInit struct {
@@ -29,13 +29,13 @@ func newMigrationInit() *migrationInit {
 	return &migrationInit{}
 }
 
-func (m *migrationInit) migrationInit(args []string) (*sql.DB, migrator.MigrationProvider, int, error) {
+func (m *migrationInit) migrationInit(args []string, initMigrationTables bool) (*sql.DB, migrator.MigrationProvider, int, error) {
 	conn, err := m.connection()
 	if err != nil {
 		return nil, nil, 0, err
 	}
 
-	provider, err := m.provider(conn)
+	provider, err := m.provider(conn, initMigrationTables)
 	if err != nil {
 		return nil, nil, 0, err
 	}
@@ -104,7 +104,7 @@ func (m *migrationInit) connection() (*sql.DB, error) {
 	}
 }
 
-func (m *migrationInit) provider(db *sql.DB) (migrator.MigrationProvider, error) {
+func (m *migrationInit) provider(db *sql.DB, initMigrationTables bool) (migrator.MigrationProvider, error) {
 	migrationProvider := os.Getenv("MIGRATOR_MIGRATION_PROVIDER")
 	tablePrefix := os.Getenv("TABLE_PREFIX")
 	if tablePrefix == "" {
@@ -113,9 +113,9 @@ func (m *migrationInit) provider(db *sql.DB) (migrator.MigrationProvider, error)
 
 	switch migrationProvider {
 	case providerTypeDB, "":
-		return migrator.NewMigrationProvider(providerTypeDB, tablePrefix, db)
+		return migrator.NewMigrationProvider(providerTypeDB, tablePrefix, db, initMigrationTables)
 	case providerTypeJSON:
-		return migrator.NewMigrationProvider(providerTypeJSON, tablePrefix, nil)
+		return migrator.NewMigrationProvider(providerTypeJSON, tablePrefix, nil, initMigrationTables)
 	default:
 		return nil, fmt.Errorf("migration provider for type %s does not exists", migrationProvider)
 	}

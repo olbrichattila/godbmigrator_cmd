@@ -13,11 +13,20 @@ import (
 const (
 	envFileName          = ".env.migrator"
 	defaultMigrationPath = "./migrations"
-	messageRollingBack   = "Rolling back"
 
 	// Colors
 	consoleColorRed = "\033[31m"
-	consoleReset = "\033[0m"
+	consoleReset    = "\033[0m"
+
+	// Messages
+	messageMigrating           = "Migrating"
+	messageRollingBack         = "Rolling back"
+	messageMigrationReport     = "Migration report"
+	messageAddNewMigration     = "Adding new migration"
+	messageValidating          = "Validating"
+	messageSaveBaseLineFile    = "Save baseline file"
+	messageRestoreBaseLineFile = "Restore baseline file"
+	messageDone                = "Done."
 )
 
 type migratorInterface interface {
@@ -26,6 +35,8 @@ type migratorInterface interface {
 	Refresh(*sql.DB, migrator.MigrationProvider, string) error
 	Report(*sql.DB, migrator.MigrationProvider, string) (string, error)
 	ChecksumValidation(*sql.DB, migrator.MigrationProvider, string) []string
+	SaveBaseline(*sql.DB, string) error
+	LoadBaseline(*sql.DB, string) error
 	AddNewMigrationFiles(string, string) error
 }
 
@@ -59,6 +70,10 @@ func routeCommandLineParameters(args []string, migrationAdapter migratorInterfac
 			add(args, migrationAdapter)
 		case "validate":
 			validate(args, migrationAdapter, migrationInit)
+		case "save-baseline":
+			saveBaseline(args, migrationAdapter, migrationInit)
+		case "restore-baseline":
+			restoreBaseline(args, migrationAdapter, migrationInit)
 		case "help":
 			displayFullHelp()
 		default:
@@ -72,16 +87,16 @@ func routeCommandLineParameters(args []string, migrationAdapter migratorInterfac
 }
 
 func migrate(args []string, migrationAdapter migratorInterface, migrationInit migrationInitInterface) {
-	fmt.Println("Migrating")
-	conn, provider, count, err := migrationInit.migrationInit(args)
+	fmt.Println(messageMigrating)
+	conn, provider, count, err := migrationInit.migrationInit(args, true)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
 	migrationPath := migrationPath()
-	
-	flagArgs := flagArgs();
+
+	flagArgs := flagArgs()
 	if _, ok := flagArgs["-no-verify"]; !ok {
 		errors := migrationAdapter.ChecksumValidation(conn, provider, migrationPath)
 		for _, errorString := range errors {
@@ -101,7 +116,7 @@ func migrate(args []string, migrationAdapter migratorInterface, migrationInit mi
 
 func rollback(args []string, migrationAdapter migratorInterface, migrationInit migrationInitInterface) {
 	fmt.Println(messageRollingBack)
-	conn, provider, count, err := migrationInit.migrationInit(args)
+	conn, provider, count, err := migrationInit.migrationInit(args, true)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -116,7 +131,7 @@ func rollback(args []string, migrationAdapter migratorInterface, migrationInit m
 
 func refresh(args []string, migrationAdapter migratorInterface, migrationInit migrationInitInterface) {
 	fmt.Println(messageRollingBack)
-	conn, provider, _, err := migrationInit.migrationInit(args)
+	conn, provider, _, err := migrationInit.migrationInit(args, true)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -130,8 +145,8 @@ func refresh(args []string, migrationAdapter migratorInterface, migrationInit mi
 }
 
 func report(args []string, migrationAdapter migratorInterface, migrationInit migrationInitInterface) {
-	fmt.Println("Migration report")
-	conn, provider, _, err := migrationInit.migrationInit(args)
+	fmt.Println(messageMigrationReport)
+	conn, provider, _, err := migrationInit.migrationInit(args, true)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -147,7 +162,7 @@ func report(args []string, migrationAdapter migratorInterface, migrationInit mig
 }
 
 func add(args []string, migrationAdapter migratorInterface) {
-	fmt.Println("Adding new migration")
+	fmt.Println(messageAddNewMigration)
 	customText := ""
 	if len(args) > 2 {
 		customText = "-" + args[2]
@@ -161,8 +176,8 @@ func add(args []string, migrationAdapter migratorInterface) {
 }
 
 func validate(args []string, migrationAdapter migratorInterface, migrationInit migrationInitInterface) {
-	fmt.Println("Validating")
-	conn, provider, _, err := migrationInit.migrationInit(args)
+	fmt.Println(messageValidating)
+	conn, provider, _, err := migrationInit.migrationInit(args, true)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -174,8 +189,42 @@ func validate(args []string, migrationAdapter migratorInterface, migrationInit m
 	for _, errorString := range errors {
 		fmt.Println(" - " + errorString)
 	}
-	
-	fmt.Println("Done.")
+
+	fmt.Println(messageDone)
+}
+
+func saveBaseline(args []string, migrationAdapter migratorInterface, migrationInit migrationInitInterface) {
+	fmt.Println(messageSaveBaseLineFile)
+	conn, _, _, err := migrationInit.migrationInit(args, true)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	migrationPath := migrationPath()
+	err = migrationAdapter.SaveBaseline(conn, migrationPath)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(messageDone)
+}
+
+func restoreBaseline(args []string, migrationAdapter migratorInterface, migrationInit migrationInitInterface) {
+	fmt.Println(messageRestoreBaseLineFile)
+	conn, _, _, err := migrationInit.migrationInit(args, false)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	migrationPath := migrationPath()
+	err = migrationAdapter.LoadBaseline(conn, migrationPath)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(messageDone)
 }
 
 func displayUsage() {
@@ -231,7 +280,7 @@ func filterArgs(args []string) []string {
 		}
 	}
 
-	return filtered;
+	return filtered
 }
 
 func flagArgs() map[string]string {
@@ -239,7 +288,7 @@ func flagArgs() map[string]string {
 	for _, str := range os.Args {
 		if strings.HasPrefix(str, "-") {
 			argParts := strings.Split(str, "=")
-			value := "";
+			value := ""
 			if len(argParts) > 1 {
 				value = argParts[1]
 			}
@@ -248,7 +297,7 @@ func flagArgs() map[string]string {
 		}
 	}
 
-	return filtered;
+	return filtered
 }
 
 func fileExists(filename string) bool {
