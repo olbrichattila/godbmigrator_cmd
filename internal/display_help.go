@@ -64,7 +64,6 @@ DB_USERNAME=SYSDBA
 DB_PASSWORD=masterkey
 
 MIGRATOR_MIGRATION_PATH=./migrations/firebird
-MIGRATOR_MIGRATION_PROVIDER=db
 -------------------------------------
 
 Setting migration path
@@ -72,14 +71,6 @@ The path by default is ./migrations
 This can be overwritten by adding the following variable to your .env file
 -------------------------------------
 MIGRATOR_MIGRATION_PATH=./migrations/custom_path
--------------------------------------
-
-Setting the migration provider in .env
-It is possible to set the migration provider (see above, saves to database or json)
-Possible values are:
--------------------------------------
-MIGRATOR_MIGRATION_PROVIDER=json
-MIGRATOR_MIGRATION_PROVIDER=db
 -------------------------------------
 `)
 }

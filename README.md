@@ -183,7 +183,6 @@ DB_PASSWORD=masterkey
 TABLE_PREFIX="my_prefix"
 
 MIGRATOR_MIGRATION_PATH=./migrations/firebird
-MIGRATOR_MIGRATION_PROVIDER=db
 ```
 
 ## Setting migration path
@@ -192,15 +191,6 @@ This can be overwritten by adding the followin variable to your .env file
 ```
 MIGRATOR_MIGRATION_PATH=./migrations/custom_path
 ```
-
-## Setting the migration provider in .env
-It is possible to set the migration provider (see above, saves to database or json)
-Possible values are:
-```
-MIGRATOR_MIGRATION_PROVIDER=json
-MIGRATOR_MIGRATION_PROVIDER=db
-```
-If not set, it defaults to db.
 
 ## Available make targets:
 ```
