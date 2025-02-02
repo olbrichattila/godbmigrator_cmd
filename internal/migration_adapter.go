@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	migrator "github.com/olbrichattila/godbmigrator"
+	"github.com/olbrichattila/godbmigrator/messager"
 )
 
 type migrationAdapter struct {
@@ -11,6 +12,10 @@ type migrationAdapter struct {
 
 func newMigrationAdapter() *migrationAdapter {
 	return &migrationAdapter{}
+}
+
+func (a *migrationAdapter) subscribeToMessages(callback messager.CallbackFunc) {
+	migrator.SubscribeToMessages(callback)
 }
 
 func (a *migrationAdapter) Migrate(db *sql.DB, provider string, migrationPath string, count int) error {

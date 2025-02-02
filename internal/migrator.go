@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/joho/godotenv"
+	"github.com/olbrichattila/godbmigrator/messager"
 )
 
 const (
@@ -40,13 +41,14 @@ type migratorInterface interface {
 }
 
 // Init starts migration command, reads .env.migrator and command line arguments, and execute what was requested
-func Init() {
+func Init(callback messager.CallbackFunc) {
 	if err := loadEnv(); err != nil {
 		fmt.Printf("Error loading %s file:%s\n", err.Error(), envFileName)
 		return
 	}
 
 	migrationAdapter := newMigrationAdapter()
+	migrationAdapter.subscribeToMessages(callback)
 	migrationInit := newMigrationInit()
 	filteredArgs := filterArgs(os.Args)
 	if err := routeCommandLineParameters(filteredArgs, migrationAdapter, migrationInit); err != nil {

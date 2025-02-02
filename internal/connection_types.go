@@ -8,7 +8,4 @@ const (
 	providerPgSQLDataType    = "pgsql"
 	providerMySQLDataType    = "mysql"
 	providerFirebirdDataType = "firebird"
-
-	providerTypeJSON = "json"
-	providerTypeDB   = "db"
 )
