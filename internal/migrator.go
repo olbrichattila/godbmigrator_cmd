@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/joho/godotenv"
-	migrator "github.com/olbrichattila/godbmigrator"
 )
 
 const (
@@ -30,11 +29,11 @@ const (
 )
 
 type migratorInterface interface {
-	Migrate(*sql.DB, migrator.MigrationProvider, string, int) error
-	Rollback(*sql.DB, migrator.MigrationProvider, string, int) error
-	Refresh(*sql.DB, migrator.MigrationProvider, string) error
-	Report(*sql.DB, migrator.MigrationProvider, string) (string, error)
-	ChecksumValidation(*sql.DB, migrator.MigrationProvider, string) []string
+	Migrate(*sql.DB, string, string, int) error
+	Rollback(*sql.DB, string, string, int) error
+	Refresh(*sql.DB, string, string) error
+	Report(*sql.DB, string, string) (string, error)
+	ChecksumValidation(*sql.DB, string, string) []string
 	SaveBaseline(*sql.DB, string) error
 	LoadBaseline(*sql.DB, string) error
 	AddNewMigrationFiles(string, string) error
@@ -88,7 +87,7 @@ func routeCommandLineParameters(args []string, migrationAdapter migratorInterfac
 
 func migrate(args []string, migrationAdapter migratorInterface, migrationInit migrationInitInterface) {
 	fmt.Println(messageMigrating)
-	conn, provider, count, err := migrationInit.migrationInit(args, true)
+	conn, prefix, count, err := migrationInit.migrationInit(args, true)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -98,7 +97,7 @@ func migrate(args []string, migrationAdapter migratorInterface, migrationInit mi
 
 	flagArgs := flagArgs()
 	if _, ok := flagArgs["-no-verify"]; !ok {
-		errors := migrationAdapter.ChecksumValidation(conn, provider, migrationPath)
+		errors := migrationAdapter.ChecksumValidation(conn, prefix, migrationPath)
 		for _, errorString := range errors {
 			fmt.Println(" - " + errorString)
 		}
@@ -108,7 +107,7 @@ func migrate(args []string, migrationAdapter migratorInterface, migrationInit mi
 		}
 	}
 
-	err = migrationAdapter.Migrate(conn, provider, migrationPath, count)
+	err = migrationAdapter.Migrate(conn, prefix, migrationPath, count)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -116,14 +115,14 @@ func migrate(args []string, migrationAdapter migratorInterface, migrationInit mi
 
 func rollback(args []string, migrationAdapter migratorInterface, migrationInit migrationInitInterface) {
 	fmt.Println(messageRollingBack)
-	conn, provider, count, err := migrationInit.migrationInit(args, true)
+	conn, prefix, count, err := migrationInit.migrationInit(args, true)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
 	migrationPath := migrationPath()
-	err = migrationAdapter.Rollback(conn, provider, migrationPath, count)
+	err = migrationAdapter.Rollback(conn, prefix, migrationPath, count)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -131,14 +130,14 @@ func rollback(args []string, migrationAdapter migratorInterface, migrationInit m
 
 func refresh(args []string, migrationAdapter migratorInterface, migrationInit migrationInitInterface) {
 	fmt.Println(messageRollingBack)
-	conn, provider, _, err := migrationInit.migrationInit(args, true)
+	conn, prefix, _, err := migrationInit.migrationInit(args, true)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
 	migrationPath := migrationPath()
-	err = migrationAdapter.Refresh(conn, provider, migrationPath)
+	err = migrationAdapter.Refresh(conn, prefix, migrationPath)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -146,14 +145,14 @@ func refresh(args []string, migrationAdapter migratorInterface, migrationInit mi
 
 func report(args []string, migrationAdapter migratorInterface, migrationInit migrationInitInterface) {
 	fmt.Println(messageMigrationReport)
-	conn, provider, _, err := migrationInit.migrationInit(args, true)
+	conn, prefix, _, err := migrationInit.migrationInit(args, true)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
 	migrationPath := migrationPath()
-	report, err := migrationAdapter.Report(conn, provider, migrationPath)
+	report, err := migrationAdapter.Report(conn, prefix, migrationPath)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -177,14 +176,14 @@ func add(args []string, migrationAdapter migratorInterface) {
 
 func validate(args []string, migrationAdapter migratorInterface, migrationInit migrationInitInterface) {
 	fmt.Println(messageValidating)
-	conn, provider, _, err := migrationInit.migrationInit(args, true)
+	conn, prefix, _, err := migrationInit.migrationInit(args, true)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
 	migrationPath := migrationPath()
-	errors := migrationAdapter.ChecksumValidation(conn, provider, migrationPath)
+	errors := migrationAdapter.ChecksumValidation(conn, prefix, migrationPath)
 
 	for _, errorString := range errors {
 		fmt.Println(" - " + errorString)

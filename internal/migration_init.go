@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-
-	migrator "github.com/olbrichattila/godbmigrator"
 )
 
 const (
@@ -16,10 +14,11 @@ const (
 	envDBPassword = "DB_PASSWORD"
 	envDBDatabase = "DB_DATABASE"
 	envDBPort     = "DB_PORT"
+	envDBPrefix   = "TABLE_PREFIX"
 )
 
 type migrationInitInterface interface {
-	migrationInit(args []string, initMigrationTables bool) (*sql.DB, migrator.MigrationProvider, int, error)
+	migrationInit(args []string, initMigrationTables bool) (*sql.DB, string, int, error)
 }
 
 type migrationInit struct {
@@ -29,23 +28,29 @@ func newMigrationInit() *migrationInit {
 	return &migrationInit{}
 }
 
-func (m *migrationInit) migrationInit(args []string, initMigrationTables bool) (*sql.DB, migrator.MigrationProvider, int, error) {
+func (m *migrationInit) migrationInit(args []string, initMigrationTables bool) (*sql.DB, string, int, error) {
 	conn, err := m.connection()
 	if err != nil {
-		return nil, nil, 0, err
-	}
-
-	provider, err := m.provider(conn, initMigrationTables)
-	if err != nil {
-		return nil, nil, 0, err
+		return nil, "", 0, err
 	}
 
 	count, err := m.migrationCount(args)
 	if err != nil {
-		return nil, nil, 0, err
+		return nil, "", 0, err
 	}
 
-	return conn, provider, count, err
+	prefix := m.getDBPrefix()
+
+	return conn, prefix, count, err
+}
+
+func (m *migrationInit) getDBPrefix() string {
+	prefix := os.Getenv(envDBPrefix)
+	if prefix == "" {
+		return defaultPrefix
+	}
+
+	return prefix
 }
 
 func (m *migrationInit) connection() (*sql.DB, error) {
@@ -101,23 +106,6 @@ func (m *migrationInit) connection() (*sql.DB, error) {
 		return db, err
 	default:
 		return nil, fmt.Errorf("invalid DB_CONNECTION %s", dbConnection)
-	}
-}
-
-func (m *migrationInit) provider(db *sql.DB, initMigrationTables bool) (migrator.MigrationProvider, error) {
-	migrationProvider := os.Getenv("MIGRATOR_MIGRATION_PROVIDER")
-	tablePrefix := os.Getenv("TABLE_PREFIX")
-	if tablePrefix == "" {
-		tablePrefix = defaultPrefix
-	}
-
-	switch migrationProvider {
-	case providerTypeDB, "":
-		return migrator.NewMigrationProvider(providerTypeDB, tablePrefix, db, initMigrationTables)
-	case providerTypeJSON:
-		return migrator.NewMigrationProvider(providerTypeJSON, tablePrefix, nil, initMigrationTables)
-	default:
-		return nil, fmt.Errorf("migration provider for type %s does not exists", migrationProvider)
 	}
 }
 
