@@ -54,7 +54,7 @@ Report:
 go run . report
 ```
 
-Adding new migratio and rollack file:
+Adding new migration and rollback file:
 ```
 go run . add <your custom message>
 ```
@@ -77,6 +77,17 @@ go run . refresh
 ```
 Here if the count parameter supplied will be ignored
 
+## Baseline
+> Note: this feature is currently in beta
+It is possible to create a snapshot of the current database structure and load it when we are re-creating the database.
+It is also useful to create a test database from a production database without data
+Please note: this supports only SQLite, MySql and PostgreSQL. (firebird support coming later)
+
+Usage:
+```
+migrator save-baseline
+migrator restore-baseline
+```
 
 ### When building the application.
 ```
@@ -96,6 +107,8 @@ migrator rollback 2
 migrator refresh
 migrator report
 migrator validate
+migrator save-baseline
+migrator restore-baseline
 ```
 
 ### Available flags:

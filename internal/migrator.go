@@ -237,6 +237,8 @@ Usage:
 	migrator report
 	migrator validate
 	migrator add <optional suffix>
+	migrator save-baseline
+	migrator restore-baseline
 
 For help how to set up:
 	migrator help
