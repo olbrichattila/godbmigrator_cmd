@@ -25,7 +25,7 @@ func (t *envTestSuite) SetupTest() {
 	os.Setenv("DB_SSLMODE", "verify-ca")
 }
 
-func (t *envTestSuite) TestMissingArgsReturnsError() {
+func (t *envTestSuite) TestEnvReturnsCorrectValues() {
 	env, err := New()
 	t.NoError(err)
 

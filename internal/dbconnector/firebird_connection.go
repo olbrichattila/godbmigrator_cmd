@@ -12,13 +12,14 @@ const driverFirebirdSQL = "firebirdsql"
 
 // newFirebirdStore initializes a Firebird SQL connection.
 func newFirebirdStore(
+	database Database,
 	host string,
 	port int,
 	user, password, dbName string,
 ) (*sql.DB, error) {
 	connStr := fmt.Sprintf("%s:%s@%s:%d%s", user, password, host, port, dbName)
 
-	db, err := sql.Open(driverFirebirdSQL, connStr)
+	db, err := database.Open(driverFirebirdSQL, connStr)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open FirebirdSQL connection: %w", err)
 	}

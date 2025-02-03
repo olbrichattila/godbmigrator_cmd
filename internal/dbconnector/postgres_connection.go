@@ -13,6 +13,7 @@ const (
 )
 
 func newPostgresStore(
+	database Database,
 	host string,
 	port int,
 	user,
@@ -30,7 +31,7 @@ func newPostgresStore(
 		sslMode,
 	)
 
-	db, err := sql.Open(driverPostgresQL, connStr)
+	db, err := database.Open(driverPostgresQL, connStr)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open PostgresQL connection: %w", err)
 	}

@@ -23,7 +23,7 @@ func New(env env.EnvironmentManager) DBConnector {
 
 // DBConnector abstracts database connection handling.
 type DBConnector interface {
-	GetConnection() (*sql.DB, error)
+	GetConnection(database Database) (*sql.DB, error)
 }
 
 type dbc struct {
@@ -31,14 +31,15 @@ type dbc struct {
 }
 
 // GetConnection returns the appropriate database connection.
-func (d *dbc) GetConnection() (*sql.DB, error) {
+func (d *dbc) GetConnection(database Database) (*sql.DB, error) {
 	dbConnection := d.env.GetDBConnection()
 	connectionHandlers := map[string]func() (*sql.DB, error){
 		providerSqLite: func() (*sql.DB, error) {
-			return newSqliteStore(d.env.GetDBDatabase())
+			return newSqliteStore(database, d.env.GetDBDatabase())
 		},
 		providerPgSQL: func() (*sql.DB, error) {
 			return newPostgresStore(
+				database,
 				d.env.GetDBHost(),
 				d.env.GetDBPort(),
 				d.env.GetDBUserName(),
@@ -49,6 +50,7 @@ func (d *dbc) GetConnection() (*sql.DB, error) {
 		},
 		providerMySQL: func() (*sql.DB, error) {
 			return newMysqlStore(
+				database,
 				d.env.GetDBHost(),
 				d.env.GetDBPort(),
 				d.env.GetDBUserName(),
@@ -58,6 +60,7 @@ func (d *dbc) GetConnection() (*sql.DB, error) {
 		},
 		providerFirebird: func() (*sql.DB, error) {
 			return newFirebirdStore(
+				database,
 				d.env.GetDBHost(),
 				d.env.GetDBPort(),
 				d.env.GetDBUserName(),

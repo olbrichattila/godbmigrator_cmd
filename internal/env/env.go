@@ -1,3 +1,4 @@
+// Package env manages .env.migrator and environment variables if not exists
 package env
 
 import (

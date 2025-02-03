@@ -13,6 +13,7 @@ const (
 )
 
 func newMysqlStore(
+	database Database,
 	host string,
 	port int,
 	user,
@@ -28,7 +29,7 @@ func newMysqlStore(
 		dbName,
 	)
 
-	db, err := sql.Open(driverMySQL, connStr)
+	db, err := database.Open(driverMySQL, connStr)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open MySQL connection: %w", err)
 	}

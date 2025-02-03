@@ -107,6 +107,7 @@ migrator report
 migrator validate
 migrator save-baseline
 migrator restore-baseline
+help (for full detailed help)
 ```
 
 ### Available flags:

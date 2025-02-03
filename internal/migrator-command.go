@@ -1,3 +1,4 @@
+// Package migratorcommand is a wrapper around db migrator github.com/olbrichattila/godbmigrator to expose it command line
 package migratorcommand
 
 import (
@@ -31,7 +32,7 @@ func Init(messageCallback messager.CallbackFunc) {
 	}
 
 	// Establish database connection
-	db, err := dbconnector.New(environment).GetConnection()
+	db, err := dbconnector.New(environment).GetConnection(dbconnector.NewDB())
 	if err != nil {
 		messageCallback(genericMessageType, err.Error())
 		return

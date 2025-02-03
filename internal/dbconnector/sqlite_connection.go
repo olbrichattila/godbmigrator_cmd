@@ -12,8 +12,11 @@ const (
 	driverTypeSqLite = "sqlite3"
 )
 
-func newSqliteStore(fileName string) (*sql.DB, error) {
-	db, err := sql.Open(driverTypeSqLite, fileName)
+func newSqliteStore(
+	database Database,
+	fileName string,
+) (*sql.DB, error) {
+	db, err := database.Open(driverTypeSqLite, fileName)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open SQLite connection: %w", err)
 	}
