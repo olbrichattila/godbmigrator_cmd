@@ -6,7 +6,7 @@ refresh:
 	go run ./cmd/migrator/ refresh
 report:
 	go run ./cmd/migrator/ report
-run-test:
+test:
 	go test -v ./...
 install:
 	go build -o ./build/migrator .

@@ -1,4 +1,4 @@
-package migrator
+package dbconnector
 
 import (
 	"database/sql"
@@ -8,12 +8,16 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+const (
+	driverMySQL = "mysql"
+)
+
 func newMysqlStore(
 	host string,
 	port int,
 	user,
 	password,
-	dbname string,
+	dbName string,
 ) (*sql.DB, error) {
 	connStr := fmt.Sprintf(
 		"%s:%s@tcp(%s:%d)/%s",
@@ -21,15 +25,17 @@ func newMysqlStore(
 		password,
 		host,
 		port,
-		dbname)
+		dbName,
+	)
 
-	db, err := sql.Open("mysql", connStr)
+	db, err := sql.Open(driverMySQL, connStr)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to open MySQL connection: %w", err)
 	}
 
 	if err := db.Ping(); err != nil {
-		return nil, err
+		db.Close()
+		return nil, fmt.Errorf("failed to ping MySQL database: %w", err)
 	}
 
 	return db, nil
