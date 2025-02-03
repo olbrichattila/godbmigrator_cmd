@@ -100,10 +100,8 @@ Usage is the same but using the application:
 ```
 migrator migrate
 migrator rollback
-
 migrator migrate 2
 migrator rollback 2
-
 migrator refresh
 migrator report
 migrator validate

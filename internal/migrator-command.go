@@ -40,7 +40,7 @@ func Init(messageCallback messager.CallbackFunc) {
 	// Parse command-line arguments
 	args := os.Args
 	if len(args) < 2 {
-		messageCallback(genericMessageType, "invalid parameter count")
+		messageCallback(genericMessageType, fmt.Sprintf("invalid parameter count.\nUsage:\n%s", getUsageAsString()))
 		return
 	}
 
@@ -124,4 +124,16 @@ func handleError(err error, messageCallback messager.CallbackFunc) {
 
 func decorateErrorMessage(message string) string {
 	return red + message + reset
+}
+
+func getUsageAsString() string {
+	return `migrator migrate
+migrator rollback
+migrator migrate 2
+migrator rollback 2
+migrator refresh
+migrator report
+migrator validate
+migrator save-baseline
+migrator restore-baseline`
 }
