@@ -8,7 +8,7 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/mattn/go-sqlite3 v1.14.22
 	github.com/nakagami/firebirdsql v0.9.10
-	github.com/olbrichattila/godbmigrator v1.1.23
+	github.com/olbrichattila/godbmigrator v1.1.24
 	github.com/stretchr/testify v1.9.0
 )
 
