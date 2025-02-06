@@ -24,20 +24,6 @@ const (
 func Init(messageCallback messager.CallbackFunc) {
 	migrator.SubscribeToMessages(messageCallback)
 
-	// Load environment configuration
-	environment, err := env.New()
-	if err != nil {
-		messageCallback(genericMessageType, err.Error())
-		return
-	}
-
-	// Establish database connection
-	db, err := dbconnector.New(environment).GetConnection(dbconnector.NewDB())
-	if err != nil {
-		messageCallback(genericMessageType, err.Error())
-		return
-	}
-
 	// Parse command-line arguments
 	args := os.Args
 	if len(args) < 2 {
@@ -45,51 +31,86 @@ func Init(messageCallback messager.CallbackFunc) {
 		return
 	}
 
-	dbPrefix := environment.GetDBPrefix()
-	migrationFilePath := environment.GetMigrationPath()
 	command := args[1]
 	commandArgs := args[2:]
 
-	runCommand(command, commandArgs, db, dbPrefix, migrationFilePath, messageCallback)
+	runCommand(command, commandArgs, messageCallback)
 }
 
-func runCommand(command string, args []string, db *sql.DB, dbPrefix, migrationPath string, messageCallback messager.CallbackFunc) {
+func connect(messageCallback messager.CallbackFunc) (*sql.DB, string, string, bool) {
+	environment, err := env.New()
+	if err != nil {
+		messageCallback(genericMessageType, err.Error())
+		return nil, "", "", false
+	}
+
+	db, err := dbconnector.New(environment).GetConnection(dbconnector.NewDB())
+	if err != nil {
+		messageCallback(genericMessageType, err.Error())
+		return nil, "", "", false
+	}
+
+	dbPrefix := environment.GetDBPrefix()
+	migrationFilePath := environment.GetMigrationPath()
+
+	return db, dbPrefix, migrationFilePath, true
+
+}
+
+func runCommand(command string, args []string, messageCallback messager.CallbackFunc) {
 	commands := map[string]func(){
 		"migrate": func() {
-			count := parseMigrationCount(args)
-			handleError(migrator.Migrate(db, dbPrefix, migrationPath, count), messageCallback)
+			if db, dbPrefix, migrationPath, ok := connect(messageCallback); ok {
+				count := parseMigrationCount(args)
+				handleError(migrator.Migrate(db, dbPrefix, migrationPath, count), messageCallback)
+			}
 		},
 		"rollback": func() {
-			count := parseMigrationCount(args)
-			handleError(migrator.Rollback(db, dbPrefix, migrationPath, count), messageCallback)
+			if db, dbPrefix, migrationPath, ok := connect(messageCallback); ok {
+				count := parseMigrationCount(args)
+				handleError(migrator.Rollback(db, dbPrefix, migrationPath, count), messageCallback)
+			}
 		},
 		"refresh": func() {
-			handleError(migrator.Refresh(db, dbPrefix, migrationPath), messageCallback)
+			if db, dbPrefix, migrationPath, ok := connect(messageCallback); ok {
+				handleError(migrator.Refresh(db, dbPrefix, migrationPath), messageCallback)
+			}
 		},
 		"report": func() {
-			report, err := migrator.Report(db, dbPrefix, migrationPath)
-			if err != nil {
-				messageCallback(genericMessageType, err.Error())
-			} else {
-				messageCallback(genericMessageType, report)
+			if db, dbPrefix, migrationPath, ok := connect(messageCallback); ok {
+				report, err := migrator.Report(db, dbPrefix, migrationPath)
+				if err != nil {
+					messageCallback(genericMessageType, err.Error())
+				} else {
+					messageCallback(genericMessageType, report)
+				}
 			}
+
 		},
 		"add": func() {
 			if len(args) == 0 {
 				messageCallback(genericMessageType, "missing migration filename")
 				return
 			}
-			handleError(migrator.AddNewMigrationFiles(migrationPath, args[0]), messageCallback)
+			if _, _, migrationPath, ok := connect(messageCallback); ok {
+				handleError(migrator.AddNewMigrationFiles(migrationPath, args[0]), messageCallback)
+			}
 		},
 		"validate": func() {
-			result := migrator.ChecksumValidation(db, dbPrefix, migrationPath)
-			messageCallback(genericMessageType, strings.Join(result, "\n"))
+			if db, dbPrefix, migrationPath, ok := connect(messageCallback); ok {
+				result := migrator.ChecksumValidation(db, dbPrefix, migrationPath)
+				messageCallback(genericMessageType, strings.Join(result, "\n"))
+			}
 		},
 		"save-baseline": func() {
-			handleError(migrator.SaveBaseline(db, migrationPath), messageCallback)
+			if db, _, migrationPath, ok := connect(messageCallback); ok {
+				handleError(migrator.SaveBaseline(db, migrationPath), messageCallback)
+			}
 		},
 		"restore-baseline": func() {
-			handleError(migrator.LoadBaseline(db, migrationPath), messageCallback)
+			if db, _, migrationPath, ok := connect(messageCallback); ok {
+				handleError(migrator.LoadBaseline(db, migrationPath), messageCallback)
+			}
 		},
 		"help": func() {
 			displayFullHelp()
