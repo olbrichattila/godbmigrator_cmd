@@ -14,16 +14,6 @@ If you'd like to integrate the migration into your application, please refer to:
 https://github.com/olbrichattila/godbmigrator/
 
 
-## What is the provider?
-Currently, it supports two types of migration providers: JSON and Database. The provider helps the migrator track which migrations were executed and when.
-
-When using the JSON provider, a JSON file will be saved next to the migration files:
-```
-./migrations/migrations.json
-```
-
-If the Database provider is used, a migrations table will be created in the same database to which you are migrating.
-
 ## Migration File Structure
 Follow this structure:
 [id]-migrate-[custom-content].sql
