@@ -1,4 +1,5 @@
-# Golang Database Migrator
+# Golang Database Migrator (godbmigrator)  
+A simple and flexible database migration tool for Go applications.
 
 ## Create Migration SQL Files
 
@@ -9,7 +10,6 @@ To install as a CLI tool:
 go install github.com/olbrichattila/godbmigrator_cmd/cmd/migrator@latest
 ```
 
-
 If you'd like to integrate the migration into your application, please refer to:
 https://github.com/olbrichattila/godbmigrator/
 
@@ -18,8 +18,9 @@ https://github.com/olbrichattila/godbmigrator/
 Follow this structure:
 [id]-migrate-[custom-content].sql
 
-The files will be processed in ascending order, therefore it is important to add an ID or date/time before:
-Alternatively use ```migrator add <optional suffix>``` which creates the proper format for you:
+The files are processed in ascending order, so it's important to prefix them with an ID or timestamp.  
+Alternatively, you can use the following command to generate a properly formatted migration file: ```migrator add <optional suffix>```
+
 For example:
 ```
 2024-05-27_19_49_38-migrate.sql
@@ -50,27 +51,30 @@ go run . add <your custom message>
 ```
 Note: the custom message is not mandatory, in that case the file will be a standard format, like date_time-migration.sql
 
-### Migrate or rollback specified amount of migrations (like 2)
-Migrate:
-```
-go run . migrate 2
-```
 
-Rollback:
-```
+### Running Migrations and Rollbacks  
+
+You can apply or roll back a specific number of migrations by passing a number as an argument.
+
+**Migrate the last 2 migrations:**  
+```sh
+go run . migrate 2
 go run . rollback 2
 ```
-Refresh
+
+
+### Refresh
 (Refresh is when all applied migration is rolled back and migrated up from scratch)
 ```
 go run . refresh
 ```
+
 Here if the count parameter supplied will be ignored
 
 ## Baseline
 > Note: this feature is currently in beta
-It is possible to create a snapshot of the current database structure and load it when we are re-creating the database.
-It is also useful to create a test database from a production database without data
+You can create a snapshot of the current database schema and restore it when recreating the database.  
+This is also useful for generating a test database from a production database without copying data.
 Please note: this supports only SQLite, MySql and PostgreSQL. (firebird support coming later)
 
 Usage:
@@ -107,13 +111,13 @@ The number of rollbacks and migrates are not mandatory.
 If it is set, for rollbacks it only apply for the last rollback batch
 Validate checks if any migration file changed since last applied
 
-## .env.migrator settings
+## Configuring Database Connections
 
-If the .env.migrator does not exists, the application will read the operating system environment variables.
-If the .env.migrator file exists and the operating system variables are also set, the operating system variables are taking priority
+### **Using Environment Variables**
+If no `.env.migrator` file is present, the application will read environment variables from the operating system.
 
-Example setting variables in linux, command line:
-```
+#### **Example (Linux/macOS Terminal)**
+```sh
 export DB_CONNECTION=sqlite
 export DB_DATABASE=./data/database.sqlite
 ```
@@ -130,9 +134,9 @@ Note: ```TABLE_PREFIX``` is non mandatory, if not set, the migration table prefi
 
 ### sqlite
 ```
-DB_CONNECTION=sqlite
-DB_DATABASE=./data/database.sqlite
-TABLE_PREFIX="my_prefix"
+DB_CONNECTION=sqlite  
+DB_DATABASE=./data/database.sqlite  
+TABLE_PREFIX="my_prefix"  # (Optional: Defaults to "olb_")
 ```
 
 ### MySql
@@ -183,7 +187,7 @@ MIGRATOR_MIGRATION_PATH=./migrations/custom_path
 
 ## Available make targets:
 ```
-mage migrate
+make migrate
 make rollback
 make refresh
 make install
@@ -219,14 +223,13 @@ and create a folder if not exists:
 mkdir -p ./migrations/new
 ```
 
-Add your migrations:
+#### Add your migrations:
 ```
-go run . add <optonally a file name suffix>
+go run . add <optionally a file name suffix>
 ```
 
 Fill in your migration and rollback file you created, then try migrate, rollback, (with number parameters) and report as explained above
 
-
 ## About me:
-- Learn more about me on my personal website. https://attilaolbrich.co.uk/menu/my-story
-- Check out my latest blog blog at my personal page. https://attilaolbrich.co.uk/blog/1/single
+- Learn more about me on my personal website: https://attilaolbrich.co.uk/menu/my-story
+- Check out my latest blog post on my website: https://attilaolbrich.co.uk/blog/1/single
