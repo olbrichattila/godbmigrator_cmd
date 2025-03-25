@@ -27,6 +27,15 @@ func (h *httpPars) Command() string {
 
 // Params implements ParameterManager, convert URL params like command line params
 func (h *httpPars) Params() []string {
+	if h.Command() == "add" {
+		name := h.r.URL.Query().Get("name")
+		if name != "" {
+			return []string{name}
+		}
+
+		return []string{}
+	}
+
 	result := []string{
 		h.getCountWithDefault(),
 	}

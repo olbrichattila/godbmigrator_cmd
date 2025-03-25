@@ -18,6 +18,10 @@ switch-pgsql:
 	cp .env.pgsql.example .env.migrator
 switch-firebird:
 	cp .env.firebird.example .env.migrator
+docker-build:
+	docker build -t migrator .
+docker-run:
+	docker run -d --name migrator -p 8081:8080 migrator
 lint:
 	# gocritic check ./...
 	revive ./...

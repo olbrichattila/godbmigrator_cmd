@@ -95,12 +95,14 @@ Usage is the same but using the application:
 migrator migrate
 migrator rollback
 migrator migrate 2
+migrator migrate 2 -force
 migrator rollback 2
 migrator refresh
 migrator report
 migrator validate
 migrator save-baseline
 migrator restore-baseline
+migrator add <optional migration file suffix>
 help (for full detailed help)
 ```
 
@@ -251,9 +253,10 @@ The following URL parameters can be used:
 - **count** (optional) – Number of items to migrate or rollback.
 - **force** (optional) – Accepts 0, 1, false, or true. Forces migration even if integrity validation fails.
 
-**Example Request**
+**Example Requests**
 ```
 http://localhost:8081?command=migrate&count=2&force=true
+http://localhost:8081?command=add&name=add_users
 ```
 
 ---

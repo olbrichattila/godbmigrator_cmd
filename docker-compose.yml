@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  migrator:
+    image: migrator:latest
+    build: .
+    ports:
+      - "8081:8080"
+    environment:
+      - HTTP_SERVER_PORT=8080
+      - DB_CONNECTION=sqlite
+      - DB_DATABASE=./database.sqlite
+      - MIGRATOR_MIGRATION_PATH=./
+    restart: unless-stopped
