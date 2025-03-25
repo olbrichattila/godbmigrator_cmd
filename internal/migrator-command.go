@@ -191,10 +191,12 @@ func getUsageAsString() string {
 	return `migrator migrate
 migrator rollback
 migrator migrate 2
+migrator migrate -force
 migrator rollback 2
 migrator refresh
 migrator report
 migrator validate
 migrator save-baseline
-migrator restore-baseline`
+migrator restore-baseline
+migrator add <optional migration file suffix>`
 }
