@@ -12,21 +12,23 @@ const (
 	envFileName = ".env.migrator"
 
 	// Defaults
-	defaultPrefix        = "olb"
-	defaultMigrationPath = "./migrations"
-	defaultDBPort        = 3306
-	defaultSSLMode       = "disable"
+	defaultPrefix         = "olb"
+	defaultMigrationPath  = "./migrations"
+	defaultDBPort         = 3306
+	defaultHTTPServerPort = 8080
+	defaultSSLMode        = "disable"
 
 	// Environment Variables
-	envDBConnection  = "DB_CONNECTION"
-	envMigrationPath = "MIGRATOR_MIGRATION_PATH"
-	envDBHost        = "DB_HOST"
-	envDBUserName    = "DB_USERNAME"
-	envDBPassword    = "DB_PASSWORD"
-	envDBDatabase    = "DB_DATABASE"
-	envDBPort        = "DB_PORT"
-	envDBPrefix      = "TABLE_PREFIX"
-	envDBSSLMode     = "DB_SSLMODE"
+	envDBConnection   = "DB_CONNECTION"
+	envMigrationPath  = "MIGRATOR_MIGRATION_PATH"
+	envDBHost         = "DB_HOST"
+	envDBUserName     = "DB_USERNAME"
+	envDBPassword     = "DB_PASSWORD"
+	envDBDatabase     = "DB_DATABASE"
+	envDBPort         = "DB_PORT"
+	envDBPrefix       = "TABLE_PREFIX"
+	envDBSSLMode      = "DB_SSLMODE"
+	envHTTPServerPort = "HTTP_SERVER_PORT"
 )
 
 // EnvironmentManager provides access to environment variables.
@@ -40,19 +42,21 @@ type EnvironmentManager interface {
 	GetDBPort() int
 	GetDBPrefix() string
 	GetDBPostgresSSLMode() string
+	GetHTTPServerPort() int
 }
 
 // environment holds environment variables.
 type environment struct {
-	migrationPath string
-	dbConnection  string
-	dbHost        string
-	dbUserName    string
-	dbPassword    string
-	dbDatabase    string
-	dbPort        int
-	dbPrefix      string
-	dbSSLMode     string
+	migrationPath  string
+	dbConnection   string
+	dbHost         string
+	dbUserName     string
+	dbPassword     string
+	dbDatabase     string
+	dbPort         int
+	dbPrefix       string
+	dbSSLMode      string
+	httpServerPort int
 }
 
 // New creates a new environment manager.
@@ -84,6 +88,7 @@ func (e *environment) loadValues() {
 	e.dbPort = getEnvAsInt(envDBPort, defaultDBPort)
 	e.dbPrefix = getEnvOrDefault(envDBPrefix, defaultPrefix)
 	e.dbSSLMode = getValidSSLMode(os.Getenv(envDBSSLMode))
+	e.httpServerPort = getEnvAsInt(envHTTPServerPort, defaultHTTPServerPort)
 }
 
 // getEnvOrDefault retrieves an environment variable or returns a default value.
@@ -127,3 +132,4 @@ func (e *environment) GetDBDatabase() string        { return e.dbDatabase }
 func (e *environment) GetDBPort() int               { return e.dbPort }
 func (e *environment) GetDBPrefix() string          { return e.dbPrefix }
 func (e *environment) GetDBPostgresSSLMode() string { return e.dbSSLMode }
+func (e *environment) GetHTTPServerPort() int       { return e.httpServerPort }

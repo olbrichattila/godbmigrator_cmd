@@ -14,8 +14,8 @@ github.com/mattn/go-sqlite3 v1.14.22 h1:2gZY6PC6kBnID23Tichd1K+Z0oS6nE/XwU+Vz/5o
 github.com/mattn/go-sqlite3 v1.14.22/go.mod h1:Uh1q+B4BYcTPb+yiD3kU8Ct7aC0hY9fxUwlHK0RXw+Y=
 github.com/nakagami/firebirdsql v0.9.10 h1:7Y73BiH3j/f8faIaryZvDZ3nEo0L7c6S5pg+qWoZ91c=
 github.com/nakagami/firebirdsql v0.9.10/go.mod h1:ei91eXUYcMkWJOr4rK6Sta+BVmi3K+WvYR4yASlq/kY=
-github.com/olbrichattila/godbmigrator v1.1.27 h1:ntL755gHBo6Uodl5XwbtlbZzD4pVYlmiT6IjjlIIJLI=
-github.com/olbrichattila/godbmigrator v1.1.27/go.mod h1:XTvCIHbdV8N398nU4lI6ZCIBS0/xjcIo18n/HOzVHwM=
+github.com/olbrichattila/godbmigrator v1.1.30 h1:Nz7NOfcJUnV2umN3BqFrZt8TtZeBDC4PNJUogJCOanw=
+github.com/olbrichattila/godbmigrator v1.1.30/go.mod h1:XTvCIHbdV8N398nU4lI6ZCIBS0/xjcIo18n/HOzVHwM=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/remyoudompheng/bigfft v0.0.0-20200410134404-eec4a21b6bb0 h1:OdAsTTz6OkFY5QxjkYwrChwuRruF69c169dPK26NUlk=

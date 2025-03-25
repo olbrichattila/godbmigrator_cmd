@@ -32,22 +32,22 @@ For example:
 ## Command line usage:
 Migrate:
 ```
-go run . migrate
+migrator migrate
 ```
 
 Rollback:
 ```
-go run . rollback
+migrator rollback
 ```
 
 Report:
 ```
-go run . report
+migrator report
 ```
 
 Adding new migration and rollback file:
 ```
-go run . add <your custom message>
+migrator add <your custom message>
 ```
 Note: the custom message is not mandatory, in that case the file will be a standard format, like date_time-migration.sql
 
@@ -58,15 +58,15 @@ You can apply or roll back a specific number of migrations by passing a number a
 
 **Migrate the last 2 migrations:**  
 ```sh
-go run . migrate 2
-go run . rollback 2
+migrator migrate 2
+migrator rollback 2
 ```
 
 
 ### Refresh
 (Refresh is when all applied migration is rolled back and migrated up from scratch)
 ```
-go run . refresh
+migrator refresh
 ```
 
 Here if the count parameter supplied will be ignored
@@ -105,7 +105,7 @@ help (for full detailed help)
 ```
 
 ### Available flags:
-```-no-verify``` This flag will skip checksum verification
+```-force``` This flag will skip checksum verification
 
 The number of rollbacks and migrates are not mandatory.
 If it is set, for rollbacks it only apply for the last rollback batch
@@ -185,6 +185,12 @@ This can be overwritten by adding the followin variable to your .env file
 MIGRATOR_MIGRATION_PATH=./migrations/custom_path
 ```
 
+## HTTP Server Mode
+Set the server port. If not defined, it will default to **8080**.
+```
+HTTP_SERVER_PORT=8081
+```
+
 ## Available make targets:
 ```
 make migrate
@@ -225,10 +231,32 @@ mkdir -p ./migrations/new
 
 #### Add your migrations:
 ```
-go run . add <optionally a file name suffix>
+migrator add <optionally a file name suffix>
 ```
 
 Fill in your migration and rollback file you created, then try migrate, rollback, (with number parameters) and report as explained above
+
+---
+
+## HTTP Server
+To run the migrator locally, use:
+```
+migrator serve
+```
+
+### URL Parameters
+
+The following URL parameters can be used:
+- **command** – The migration command (e.g., migrate, rollback).
+- **count** (optional) – Number of items to migrate or rollback.
+- **force** (optional) – Accepts 0, 1, false, or true. Forces migration even if integrity validation fails.
+
+**Example Request**
+```
+http://localhost:8081?command=migrate&count=2&force=true
+```
+
+---
 
 ## About me:
 - Learn more about me on my personal website: https://attilaolbrich.co.uk/menu/my-story
