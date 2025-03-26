@@ -19,6 +19,7 @@ const (
 	reset              = "\033[0m"
 	red                = "\033[31m"
 	genericMessageType = -1
+	errorMessageType   = -2
 )
 
 // Init will initiate the command line utility
@@ -159,7 +160,7 @@ func runCommand(parManager parameters.ParameterManager, messageCallback func(int
 	if cmdFunc, exists := commands[command]; exists {
 		cmdFunc()
 	} else {
-		messageCallback(genericMessageType, fmt.Sprintf("unknown command: %s", command))
+		messageCallback(errorMessageType, fmt.Sprintf("unknown command: %s", command))
 	}
 }
 
@@ -175,7 +176,7 @@ func parseMigrationCount(args []string) int {
 func handleError(err error, messageCallback func(int, string)) {
 	if err != nil {
 		messageCallback(
-			genericMessageType,
+			errorMessageType,
 			decorateErrorMessage(
 				err.Error(),
 			),

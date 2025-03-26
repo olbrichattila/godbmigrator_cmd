@@ -22,17 +22,29 @@ func Serve(port int, runner runnerFunc) error {
 	return http.ListenAndServe(":"+strconv.Itoa(port), nil)
 }
 
+type HttpResponse struct {
+	Errors []string `json:"errors"`
+	Body   []string `json:"body"`
+}
+
 func runMiddleware(runner runnerFunc) handleFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		result := []string{}
+		response := &HttpResponse{
+			Errors: []string{},
+			Body:   []string{},
+		}
 		decorator := messagedecorator.New()
 		parManager := parameters.NewHTTPPars(r)
 		runner(parManager, func(eventType int, message string) {
+			if eventType == -2 {
+				response.Errors = append(response.Errors, message)
+				return
+			}
 			decoratedMessage := decorator.DecorateMessage(eventType, message)
-			result = append(result, decoratedMessage)
+			response.Body = append(response.Body, decoratedMessage)
 		})
 
-		res, err := json.Marshal(result)
+		res, err := json.Marshal(response)
 		if err != nil {
 			http.Error(w, fmt.Sprintf("An error occurred: %v", err), http.StatusInternalServerError)
 			return
