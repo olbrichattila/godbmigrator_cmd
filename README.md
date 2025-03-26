@@ -260,6 +260,12 @@ http://localhost:8081?command=add&name=add_users
 ```
 
 ---
+## Pre-built docker image
+```
+docker pull aolb/migrator
+```
+
+---
 
 ## About me:
 - Learn more about me on my personal website: https://attilaolbrich.co.uk/menu/my-story

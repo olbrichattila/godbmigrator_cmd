@@ -22,6 +22,12 @@ docker-build:
 	docker build -t migrator .
 docker-run:
 	docker run -d --name migrator -p 8081:8080 migrator
+docker-login:
+	docker login	
+docker-deploy:
+	docker build -t migrator .
+	docker tag migrator:latest aolb/migrator:latest
+	docker push aolb/migrator:latest
 lint:
 	# gocritic check ./...
 	revive ./...
